@@ -1,0 +1,6 @@
+/assets/**
+/scripts/*.json
+/scripts/*.js
+.keystone
+.vscode
+node_modules/**
