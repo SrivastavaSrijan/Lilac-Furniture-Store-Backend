@@ -8,8 +8,11 @@ import { text, relationship } from '@keystone-6/core/fields';
 export const Category = list({
   access: allowAll,
   fields: {
-    name:  text({ validation: { isRequired: true } }),
-    description: text({ validation: { isRequired: true }, ui: { displayMode: 'textarea' } }),
+    name: text({ validation: { isRequired: true } }),
+    description: text({
+      validation: { isRequired: true },
+      ui: { displayMode: 'textarea' },
+    }),
     image: cloudinaryImage({ cloudinary, label: 'Source' }),
     products: relationship({
       ref: 'Product.category',

@@ -2,7 +2,6 @@ import { createAuth } from '@keystone-6/auth';
 import { config } from '@keystone-6/core';
 import { statelessSessions } from '@keystone-6/core/session';
 
-
 import 'dotenv/config';
 import { User, Product, ProductImage, Category, Banner } from './schemas';
 import { insertSeedData, mutateData } from './scripts';
@@ -26,7 +25,6 @@ const { withAuth } = createAuth({
 
 export default withAuth(
   config({
-    // @ts-ignore
     server: {
       cors: {
         origin: [process.env.FRONTEND_URL],
@@ -38,10 +36,10 @@ export default withAuth(
       url: databaseURL,
       async onConnect(context) {
         console.log('Connected to the database!');
-        if (process.argv.includes('--seed')) 
+        if (process.argv.includes('--seed'))
           await insertSeedData(context.prisma);
-        else if (process.argv.includes('--run'))  
-          await mutateData(context.prisma)
+        else if (process.argv.includes('--run'))
+          await mutateData(context.prisma);
       },
     },
     lists: {
@@ -61,5 +59,5 @@ export default withAuth(
         !!session?.data,
     },
     session: statelessSessions(sessionConfig),
-  })
+  }),
 );
