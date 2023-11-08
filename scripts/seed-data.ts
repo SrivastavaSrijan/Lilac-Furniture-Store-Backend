@@ -106,8 +106,14 @@ const generateMetadata = () => {
 const imageDirectory = path.join(__dirname, '..', 'assets', 'images');
 const bannerDirectory = imageDirectory + '/banners';
 const productsDirectory = imageDirectory + '/products';
-const productImageFiles = fs.readdirSync(productsDirectory);
-const bannerImageFiles = fs.readdirSync(bannerDirectory);
+let productImageFiles: string[] = [];
+let bannerImageFiles: string[] = [];
+try {
+  productImageFiles = fs.readdirSync(productsDirectory);
+  bannerImageFiles = fs.readdirSync(bannerDirectory);
+} catch (error) {
+  console.error(error);
+}
 
 // Function to generate a random product entry with highly random names
 const generateRandomProduct = () => {
