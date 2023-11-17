@@ -5,6 +5,7 @@ import { statelessSessions } from '@keystone-6/core/session';
 import 'dotenv/config';
 import { User, Product, ProductImage, Category, Banner } from './schemas';
 import { insertSeedData, mutateData } from './scripts';
+import { sendPasswordResetToken } from './lib';
 
 const databaseURL = process.env.DATABASE_URL || 'file:./app.db';
 
@@ -17,6 +18,12 @@ const { withAuth } = createAuth({
   listKey: 'User',
   identityField: 'email',
   secretField: 'password',
+  passwordResetLink: {
+    sendToken: async ({ identity, token }) => {
+      sendPasswordResetToken(token, identity);
+    },
+    tokensValidForMins: 60,
+  },
   initFirstItem: {
     fields: ['name', 'email', 'password'],
     // TODO: Add in inital roles here
