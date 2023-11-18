@@ -8,5 +8,13 @@ export const User = list({
     name: text({ validation: { isRequired: true } }),
     email: text({ validation: { isRequired: true }, isIndexed: 'unique' }),
     password: password(),
+    cart: relationship({
+      ref: 'CartItem.user',
+      many: true,
+      ui: {
+        createView: { fieldMode: 'hidden' },
+        itemView: { fieldMode: 'read' },
+      },
+    }),
   },
 });

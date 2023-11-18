@@ -3,9 +3,17 @@ import { config } from '@keystone-6/core';
 import { statelessSessions } from '@keystone-6/core/session';
 
 import 'dotenv/config';
-import { User, Product, ProductImage, Category, Banner } from './schemas';
+import {
+  User,
+  Product,
+  ProductImage,
+  Category,
+  Banner,
+  CartItem,
+} from './schemas';
 import { insertSeedData, mutateData } from './scripts';
 import { sendPasswordResetToken } from './lib';
+import { extendGraphqlSchema } from './mutations';
 
 const databaseURL = process.env.DATABASE_URL || 'file:./app.db';
 
@@ -56,9 +64,9 @@ export default withAuth(
       ProductImage,
       Category,
       Banner,
+      CartItem,
     },
-    // extendGraphqlSchema: (schema) =>
-    //   addCompatibilityForQueries(extendGraphqlSchema(schema)),
+    extendGraphqlSchema: extendGraphqlSchema,
     ui: {
       // Show the UI only for poeple who pass this test
       isAccessAllowed: ({ session }) =>
