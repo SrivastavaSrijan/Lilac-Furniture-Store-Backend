@@ -6,7 +6,7 @@ import { faker } from '@faker-js/faker';
 import { startCase, mapValues } from 'lodash';
 import * as fs from 'fs';
 import * as path from 'path';
-
+import kebabCase = require('lodash.kebabcase');
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const seedProducts = async (prisma: PrismaClient) => {
   const imageDirectory = path.join(
@@ -120,6 +120,9 @@ const seedProducts = async (prisma: PrismaClient) => {
     );
     return parts;
   };
+  const existingNames = (await prisma.product.findMany()).map(
+    ({ name }) => name,
+  );
 
   // Function to generate a random product entry with highly random names
   const generateRandomProduct = () => {
@@ -131,14 +134,17 @@ const seedProducts = async (prisma: PrismaClient) => {
     // Pick the next image filename, ensuring there's an image available
     const productPhoto =
       productImageFiles.length > 0 ? productImageFiles.shift() : null;
-
+    let name = startCase(faker.person.lastName());
+    if (existingNames.includes(name))
+      name = startCase(faker.person.lastName() + faker.person.middleName());
     return {
-      name: startCase(faker.person.lastName()),
+      name,
       description: productDescription,
       status: 'AVAILABLE',
       price: productPricePaisa,
       image: productPhoto || '',
       meta: generateMetadata(),
+      slug: kebabCase(name),
     };
   };
 
@@ -153,7 +159,7 @@ const seedProducts = async (prisma: PrismaClient) => {
   );
 
   for (const product of products) {
-    console.log(`👙 Inserting Product Data: ${product.name} Products`);
+    console.log(`👙 Inserting Product Data: ${product.name}`);
     try {
       const imageUploaded = await uploadAndReturn(
         prisma,
@@ -171,6 +177,7 @@ const seedProducts = async (prisma: PrismaClient) => {
           price: product.price,
           image: { connect: { id: imageUploaded.id } },
           meta: product.meta,
+          slug: product.slug,
         },
       });
       console.log(`✨ Product created: ${pid}`);
@@ -253,7 +260,7 @@ cloudinary.config({
 async function uploadImage(imagePath: string): Promise<UploadApiResponse> {
   try {
     const result = await cloudinary.uploader.upload(imagePath, {
-      folder: imagePath.split('/backend-new')[1], // customize this
+      folder: imagePath.split('/backend')[1], // customize this
     });
     return result;
   } catch (error) {
@@ -309,7 +316,7 @@ const uploadAndReturn = async (
         alt,
       },
     });
-    console.log('🚀 Uploaded Image', imageUploaded);
+    console.log('🚀 Uploaded Image', imageUploaded.id);
     return imageUploaded;
   }
   return image;

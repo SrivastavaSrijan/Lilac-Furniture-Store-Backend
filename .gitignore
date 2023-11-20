@@ -1,4 +1,4 @@
-/assets/**
+public/assets/**
 /scripts/*.json
 /scripts/*.js
 .keystone

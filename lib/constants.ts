@@ -1,6 +1,5 @@
 import { text } from '@keystone-6/core/fields';
 import kebabCase from 'lodash.kebabcase';
-import { nanoid } from 'nanoid';
 
 export const cloudinary = {
   cloudName: process.env.CLOUDINARY_CLOUD_NAME ?? '',

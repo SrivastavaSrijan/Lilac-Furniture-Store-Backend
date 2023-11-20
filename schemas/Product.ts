@@ -12,6 +12,7 @@ import { withSlug } from '../lib/constants';
 export const Product = list({
   // TODO: access
   access: allowAll,
+  ui: { listView: { initialColumns: ['name', 'category'] } },
   fields: {
     ...withSlug,
     name: text({ validation: { isRequired: true } }),
