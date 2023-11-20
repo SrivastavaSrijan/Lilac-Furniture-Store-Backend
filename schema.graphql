@@ -156,6 +156,7 @@ input CartItemRelateToManyForCreateInput {
 
 type Product {
   id: ID!
+  slug: String
   name: String
   description: String
   status: String
@@ -167,6 +168,7 @@ type Product {
 
 input ProductWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 input ProductWhereInput {
@@ -174,6 +176,7 @@ input ProductWhereInput {
   OR: [ProductWhereInput!]
   NOT: [ProductWhereInput!]
   id: IDFilter
+  slug: StringFilter
   name: StringFilter
   description: StringFilter
   status: StringNullableFilter
@@ -210,6 +213,7 @@ input IntNullableFilter {
 
 input ProductOrderByInput {
   id: OrderDirection
+  slug: OrderDirection
   name: OrderDirection
   description: OrderDirection
   status: OrderDirection
@@ -217,6 +221,7 @@ input ProductOrderByInput {
 }
 
 input ProductUpdateInput {
+  slug: String
   name: String
   description: String
   status: String
@@ -244,6 +249,7 @@ input ProductUpdateArgs {
 }
 
 input ProductCreateInput {
+  slug: String
   name: String
   description: String
   status: String
@@ -369,6 +375,7 @@ input ProductRelateToOneForCreateInput {
 
 type Category {
   id: ID!
+  slug: String
   name: String
   description: String
   image: CloudinaryImage_File
@@ -378,6 +385,7 @@ type Category {
 
 input CategoryWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 input CategoryWhereInput {
@@ -385,6 +393,7 @@ input CategoryWhereInput {
   OR: [CategoryWhereInput!]
   NOT: [CategoryWhereInput!]
   id: IDFilter
+  slug: StringFilter
   name: StringFilter
   description: StringFilter
   products: ProductManyRelationFilter
@@ -398,11 +407,13 @@ input ProductManyRelationFilter {
 
 input CategoryOrderByInput {
   id: OrderDirection
+  slug: OrderDirection
   name: OrderDirection
   description: OrderDirection
 }
 
 input CategoryUpdateInput {
+  slug: String
   name: String
   description: String
   image: Upload
@@ -422,6 +433,7 @@ input CategoryUpdateArgs {
 }
 
 input CategoryCreateInput {
+  slug: String
   name: String
   description: String
   image: Upload

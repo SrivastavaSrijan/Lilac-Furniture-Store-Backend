@@ -24,6 +24,7 @@ model User {
 
 model Product {
   id                    String        @id @default(cuid())
+  slug                  String        @unique @default("")
   name                  String        @default("")
   description           String        @default("")
   status                String?       @default("DRAFT")
@@ -47,6 +48,7 @@ model ProductImage {
 
 model Category {
   id          String    @id @default(cuid())
+  slug        String    @unique @default("")
   name        String    @default("")
   description String    @default("")
   image       Json?

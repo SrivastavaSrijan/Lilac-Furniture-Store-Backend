@@ -7,11 +7,13 @@ import {
   relationship,
   json,
 } from '@keystone-6/core/fields';
+import { withSlug } from '../lib/constants';
 
 export const Product = list({
   // TODO: access
   access: allowAll,
   fields: {
+    ...withSlug,
     name: text({ validation: { isRequired: true } }),
     description: text({ ui: { displayMode: 'textarea' } }),
     status: select({
