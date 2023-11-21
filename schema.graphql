@@ -663,6 +663,12 @@ type Query {
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
   validateUserPasswordResetToken(email: String!, token: String!): ValidateUserPasswordResetTokenResult
+  getPriceRange: PriceRange
+}
+
+type PriceRange {
+  min: Float
+  max: Float
 }
 
 union AuthenticatedItem = User
