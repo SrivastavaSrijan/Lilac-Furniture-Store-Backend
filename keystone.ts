@@ -10,6 +10,7 @@ import {
   Category,
   Banner,
   CartItem,
+  ProductVariant,
 } from './schemas';
 import { insertSeedData, mutateData } from './scripts';
 import { sendPasswordResetToken } from './lib';
@@ -62,6 +63,7 @@ export default withAuth(
       User,
       Product,
       ProductImage,
+      ProductVariant,
       Category,
       Banner,
       CartItem,

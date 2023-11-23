@@ -11,7 +11,7 @@ export const CartItem = list({
   },
   fields: {
     quantity: integer({ defaultValue: 1, validation: { isRequired: true } }),
-    product: relationship({ ref: 'Product' }),
+    variant: relationship({ ref: 'ProductVariant' }),
     user: relationship({ ref: 'User.cart' }),
   },
 });

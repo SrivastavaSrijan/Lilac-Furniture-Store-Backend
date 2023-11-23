@@ -14,8 +14,8 @@ export const extendGraphqlSchema = graphql.extend((base) => {
           },
         }),
         async resolve(_, __, context: Context) {
-          // Use Prisma's aggregation capabilities to get the min and max price
-          const priceAggregate = await context.prisma.product.aggregate({
+          // Use Prisma's aggregation capabilities to get the min and max price from ProductVariant
+          const priceAggregate = await context.prisma.productVariant.aggregate({
             _min: {
               price: true,
             },
@@ -23,17 +23,18 @@ export const extendGraphqlSchema = graphql.extend((base) => {
               price: true,
             },
           });
+
           const min = priceAggregate._min.price;
           const max = priceAggregate._max.price;
-          if (!min || !max)
+          if (min === null || max === null) {
             throw new Error('Cannot aggregate a minimum/maximum price');
+          }
 
           return {
             min,
             max,
           };
         },
-        // Return the price range
       }),
     },
     mutation: {
@@ -47,7 +48,9 @@ export const extendGraphqlSchema = graphql.extend((base) => {
           const allCartItems = await context.db.CartItem.findMany({
             where: {
               user: { id: { equals: session.itemId } },
-              product: { id: { equals: id } },
+              variant: {
+                product: { id: { equals: id } },
+              },
             },
           });
           const [existingProduct] = allCartItems;
@@ -61,7 +64,7 @@ export const extendGraphqlSchema = graphql.extend((base) => {
           }
           return await context.db.CartItem.createOne({
             data: {
-              product: { connect: { id } },
+              variant: { connect: { id } },
               user: { connect: { id: session.itemId } },
             },
           });

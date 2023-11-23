@@ -174,7 +174,6 @@ const seedProducts = async (prisma: PrismaClient) => {
           name: product.name,
           description: product.description,
           status: 'AVAILABLE', // or whatever status you want to set
-          price: product.price,
           image: { connect: { id: imageUploaded.id } },
           meta: product.meta,
           slug: product.slug,

@@ -160,7 +160,13 @@ type Product {
   name: String
   description: String
   status: String
-  price: Int
+  defaultVariantId: String
+  variant(skuId: String = null): ProductVariant
+  variants(where: ProductVariantWhereInput! = {}, orderBy: [ProductVariantOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductVariantWhereUniqueInput): [ProductVariant!]
+  variantsCount(where: ProductVariantWhereInput! = {}): Int
+  type: String
+  style: String
+  company: String
   image: ProductImage
   category: Category
   meta: JSON
@@ -180,7 +186,11 @@ input ProductWhereInput {
   name: StringFilter
   description: StringFilter
   status: StringNullableFilter
-  price: IntNullableFilter
+  defaultVariantId: StringFilter
+  variants: ProductVariantManyRelationFilter
+  type: StringFilter
+  style: StringFilter
+  company: StringFilter
   image: ProductImageWhereInput
   category: CategoryWhereInput
 }
@@ -200,15 +210,10 @@ input StringNullableFilter {
   not: StringNullableFilter
 }
 
-input IntNullableFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: IntNullableFilter
+input ProductVariantManyRelationFilter {
+  every: ProductVariantWhereInput
+  some: ProductVariantWhereInput
+  none: ProductVariantWhereInput
 }
 
 input ProductOrderByInput {
@@ -217,7 +222,10 @@ input ProductOrderByInput {
   name: OrderDirection
   description: OrderDirection
   status: OrderDirection
-  price: OrderDirection
+  defaultVariantId: OrderDirection
+  type: OrderDirection
+  style: OrderDirection
+  company: OrderDirection
 }
 
 input ProductUpdateInput {
@@ -225,10 +233,21 @@ input ProductUpdateInput {
   name: String
   description: String
   status: String
-  price: Int
+  defaultVariantId: String
+  variants: ProductVariantRelateToManyForUpdateInput
+  type: String
+  style: String
+  company: String
   image: ProductImageRelateToOneForUpdateInput
   category: CategoryRelateToOneForUpdateInput
   meta: JSON
+}
+
+input ProductVariantRelateToManyForUpdateInput {
+  disconnect: [ProductVariantWhereUniqueInput!]
+  set: [ProductVariantWhereUniqueInput!]
+  create: [ProductVariantCreateInput!]
+  connect: [ProductVariantWhereUniqueInput!]
 }
 
 input ProductImageRelateToOneForUpdateInput {
@@ -253,10 +272,19 @@ input ProductCreateInput {
   name: String
   description: String
   status: String
-  price: Int
+  defaultVariantId: String
+  variants: ProductVariantRelateToManyForCreateInput
+  type: String
+  style: String
+  company: String
   image: ProductImageRelateToOneForCreateInput
   category: CategoryRelateToOneForCreateInput
   meta: JSON
+}
+
+input ProductVariantRelateToManyForCreateInput {
+  create: [ProductVariantCreateInput!]
+  connect: [ProductVariantWhereUniqueInput!]
 }
 
 input ProductImageRelateToOneForCreateInput {
@@ -371,6 +399,76 @@ input ProductImageCreateInput {
 input ProductRelateToOneForCreateInput {
   create: ProductCreateInput
   connect: ProductWhereUniqueInput
+}
+
+type ProductVariant {
+  id: ID!
+  price: Int
+  color: String
+  material: String
+  variant: String
+  size: String
+  product: Product
+}
+
+input ProductVariantWhereUniqueInput {
+  id: ID
+}
+
+input ProductVariantWhereInput {
+  AND: [ProductVariantWhereInput!]
+  OR: [ProductVariantWhereInput!]
+  NOT: [ProductVariantWhereInput!]
+  id: IDFilter
+  price: IntFilter
+  color: StringFilter
+  material: StringFilter
+  variant: StringFilter
+  size: StringFilter
+  product: ProductWhereInput
+}
+
+input IntFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntFilter
+}
+
+input ProductVariantOrderByInput {
+  id: OrderDirection
+  price: OrderDirection
+  color: OrderDirection
+  material: OrderDirection
+  variant: OrderDirection
+  size: OrderDirection
+}
+
+input ProductVariantUpdateInput {
+  price: Int
+  color: String
+  material: String
+  variant: String
+  size: String
+  product: ProductRelateToOneForUpdateInput
+}
+
+input ProductVariantUpdateArgs {
+  where: ProductVariantWhereUniqueInput!
+  data: ProductVariantUpdateInput!
+}
+
+input ProductVariantCreateInput {
+  price: Int
+  color: String
+  material: String
+  variant: String
+  size: String
+  product: ProductRelateToOneForCreateInput
 }
 
 type Category {
@@ -501,7 +599,7 @@ input BannerCreateInput {
 type CartItem {
   id: ID!
   quantity: Int
-  product: Product
+  variant: ProductVariant
   user: User
 }
 
@@ -515,19 +613,8 @@ input CartItemWhereInput {
   NOT: [CartItemWhereInput!]
   id: IDFilter
   quantity: IntFilter
-  product: ProductWhereInput
+  variant: ProductVariantWhereInput
   user: UserWhereInput
-}
-
-input IntFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: IntFilter
 }
 
 input CartItemOrderByInput {
@@ -537,8 +624,14 @@ input CartItemOrderByInput {
 
 input CartItemUpdateInput {
   quantity: Int
-  product: ProductRelateToOneForUpdateInput
+  variant: ProductVariantRelateToOneForUpdateInput
   user: UserRelateToOneForUpdateInput
+}
+
+input ProductVariantRelateToOneForUpdateInput {
+  create: ProductVariantCreateInput
+  connect: ProductVariantWhereUniqueInput
+  disconnect: Boolean
 }
 
 input UserRelateToOneForUpdateInput {
@@ -554,8 +647,13 @@ input CartItemUpdateArgs {
 
 input CartItemCreateInput {
   quantity: Int
-  product: ProductRelateToOneForCreateInput
+  variant: ProductVariantRelateToOneForCreateInput
   user: UserRelateToOneForCreateInput
+}
+
+input ProductVariantRelateToOneForCreateInput {
+  create: ProductVariantCreateInput
+  connect: ProductVariantWhereUniqueInput
 }
 
 input UserRelateToOneForCreateInput {
@@ -587,6 +685,12 @@ type Mutation {
   updateProductImages(data: [ProductImageUpdateArgs!]!): [ProductImage]
   deleteProductImage(where: ProductImageWhereUniqueInput!): ProductImage
   deleteProductImages(where: [ProductImageWhereUniqueInput!]!): [ProductImage]
+  createProductVariant(data: ProductVariantCreateInput!): ProductVariant
+  createProductVariants(data: [ProductVariantCreateInput!]!): [ProductVariant]
+  updateProductVariant(where: ProductVariantWhereUniqueInput!, data: ProductVariantUpdateInput!): ProductVariant
+  updateProductVariants(data: [ProductVariantUpdateArgs!]!): [ProductVariant]
+  deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
+  deleteProductVariants(where: [ProductVariantWhereUniqueInput!]!): [ProductVariant]
   createCategory(data: CategoryCreateInput!): Category
   createCategories(data: [CategoryCreateInput!]!): [Category]
   updateCategory(where: CategoryWhereUniqueInput!, data: CategoryUpdateInput!): Category
@@ -651,6 +755,9 @@ type Query {
   productImages(where: ProductImageWhereInput! = {}, orderBy: [ProductImageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductImageWhereUniqueInput): [ProductImage!]
   productImage(where: ProductImageWhereUniqueInput!): ProductImage
   productImagesCount(where: ProductImageWhereInput! = {}): Int
+  productVariants(where: ProductVariantWhereInput! = {}, orderBy: [ProductVariantOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductVariantWhereUniqueInput): [ProductVariant!]
+  productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
+  productVariantsCount(where: ProductVariantWhereInput! = {}): Int
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
   category(where: CategoryWhereUniqueInput!): Category
   categoriesCount(where: CategoryWhereInput! = {}): Int
