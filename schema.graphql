@@ -161,7 +161,8 @@ type Product {
   description: String
   status: String
   defaultVariantId: String
-  variant(skuId: String = null): ProductVariant
+  lowestPrice: Int
+  highestPrice: Int
   variants(where: ProductVariantWhereInput! = {}, orderBy: [ProductVariantOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductVariantWhereUniqueInput): [ProductVariant!]
   variantsCount(where: ProductVariantWhereInput! = {}): Int
   type: String
@@ -170,6 +171,7 @@ type Product {
   image: ProductImage
   category: Category
   meta: JSON
+  variant(skuId: String = null): ProductVariant
 }
 
 input ProductWhereUniqueInput {
@@ -187,6 +189,8 @@ input ProductWhereInput {
   description: StringFilter
   status: StringNullableFilter
   defaultVariantId: StringFilter
+  lowestPrice: IntFilter
+  highestPrice: IntFilter
   variants: ProductVariantManyRelationFilter
   type: StringFilter
   style: StringFilter
@@ -210,6 +214,17 @@ input StringNullableFilter {
   not: StringNullableFilter
 }
 
+input IntFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntFilter
+}
+
 input ProductVariantManyRelationFilter {
   every: ProductVariantWhereInput
   some: ProductVariantWhereInput
@@ -223,6 +238,8 @@ input ProductOrderByInput {
   description: OrderDirection
   status: OrderDirection
   defaultVariantId: OrderDirection
+  lowestPrice: OrderDirection
+  highestPrice: OrderDirection
   type: OrderDirection
   style: OrderDirection
   company: OrderDirection
@@ -234,6 +251,8 @@ input ProductUpdateInput {
   description: String
   status: String
   defaultVariantId: String
+  lowestPrice: Int
+  highestPrice: Int
   variants: ProductVariantRelateToManyForUpdateInput
   type: String
   style: String
@@ -273,6 +292,8 @@ input ProductCreateInput {
   description: String
   status: String
   defaultVariantId: String
+  lowestPrice: Int
+  highestPrice: Int
   variants: ProductVariantRelateToManyForCreateInput
   type: String
   style: String
@@ -426,17 +447,6 @@ input ProductVariantWhereInput {
   variant: StringFilter
   size: StringFilter
   product: ProductWhereInput
-}
-
-input IntFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: IntFilter
 }
 
 input ProductVariantOrderByInput {
@@ -714,6 +724,8 @@ type Mutation {
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
   sendUserPasswordResetLink(email: String!): Boolean!
   redeemUserPasswordResetToken(email: String!, token: String!, password: String!): RedeemUserPasswordResetTokenResult
+
+  """ Add an item to a cart, remove if quantity = 0 """
   addToCart(id: ID!): CartItem
 }
 
@@ -770,12 +782,9 @@ type Query {
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
   validateUserPasswordResetToken(email: String!, token: String!): ValidateUserPasswordResetTokenResult
-  getPriceRange: PriceRange
-}
 
-type PriceRange {
-  min: Float
-  max: Float
+  """ Get price range over a ProductVariant """
+  getPriceRange(where: ProductWhereInput): MinMax
 }
 
 union AuthenticatedItem = User
@@ -885,4 +894,10 @@ type KeystoneAdminUISort {
 enum KeystoneAdminUISortDirection {
   ASC
   DESC
+}
+
+""" Min/Max Price """
+type MinMax {
+  min: Float
+  max: Float
 }

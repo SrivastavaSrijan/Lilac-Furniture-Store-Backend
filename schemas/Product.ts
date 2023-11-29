@@ -6,13 +6,16 @@ import {
   relationship,
   json,
   virtual,
+  integer,
 } from '@keystone-6/core/fields';
 import { withSlug } from '../lib/constants';
+import type { Context } from '.keystone/types';
+import { updateDefaultProductSchema, validateRelationships } from '../lib';
 
 export const Product = list({
   // TODO: access
   access: allowAll,
-  ui: { listView: { initialColumns: ['name', 'category'] } },
+  ui: { listView: { initialColumns: ['name', 'category', 'type'] } },
   fields: {
     ...withSlug,
     name: text({
@@ -35,7 +38,65 @@ export const Product = list({
     }),
     defaultVariantId: text({
       validation: { isRequired: true },
+      defaultValue: 'null',
+      ui: {
+        createView: { fieldMode: 'hidden' },
+        itemView: { fieldMode: 'hidden' },
+      },
     }),
+    lowestPrice: integer({
+      validation: { isRequired: true },
+      ui: {
+        createView: { fieldMode: 'hidden' },
+        itemView: { fieldMode: 'hidden' },
+      },
+      isOrderable: true,
+      defaultValue: -1,
+    }),
+    highestPrice: integer({
+      validation: { isRequired: true },
+      isOrderable: true,
+      ui: {
+        createView: { fieldMode: 'hidden' },
+        itemView: { fieldMode: 'hidden' },
+      },
+      defaultValue: -1,
+    }),
+    variants: relationship({
+      ref: 'ProductVariant.product',
+      many: true,
+      ui: {
+        displayMode: 'select',
+        labelField: 'color',
+      },
+      hooks: {
+        validateInput: (options) => {
+          return validateRelationships({ hasMany: ['variants'], ...options });
+        },
+      },
+    }),
+    type: text(),
+    style: text(),
+    company: text(),
+    image: relationship({
+      ref: 'ProductImage.product',
+      ui: {
+        displayMode: 'cards',
+        cardFields: ['image'],
+        inlineCreate: { fields: ['image'] },
+      },
+    }),
+    category: relationship({
+      ref: 'Category.products',
+      many: false,
+      ui: {
+        displayMode: 'cards',
+        inlineConnect: { labelField: 'name', searchFields: ['name'] },
+        cardFields: ['name'],
+        inlineCreate: { fields: ['name', 'description'] },
+      },
+    }),
+    meta: json({ defaultValue: {} }),
     variant: virtual({
       field: (lists) =>
         graphql.field({
@@ -74,36 +135,12 @@ export const Product = list({
         itemView: { fieldMode: 'hidden' },
       },
     }),
-    variants: relationship({
-      ref: 'ProductVariant.product',
-      many: true,
-      ui: {
-        displayMode: 'cards',
-        cardFields: ['id', 'price', 'color', 'material'],
-        inlineConnect: true,
-      },
-    }),
-    // .
-    type: text(),
-    style: text(),
-    company: text(),
-    image: relationship({
-      ref: 'ProductImage.product',
-      ui: {
-        displayMode: 'cards',
-        cardFields: ['image', 'alt'],
-        inlineCreate: { fields: ['image'] },
-      },
-    }),
-    category: relationship({
-      ref: 'Category.products',
-      many: false,
-      ui: {
-        displayMode: 'cards',
-        cardFields: ['name'],
-        inlineCreate: { fields: ['name', 'description'] },
-      },
-    }),
-    meta: json({ defaultValue: {} }),
+  },
+  hooks: {
+    afterOperation: async ({ context: _context, item }) => {
+      const context = _context as Context;
+      const id = item?.id?.toString();
+      if (id) await updateDefaultProductSchema(context.prisma, id);
+    },
   },
 });

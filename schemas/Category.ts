@@ -7,6 +7,7 @@ import { text, relationship } from '@keystone-6/core/fields';
 
 export const Category = list({
   access: allowAll,
+  ui: { listView: { initialColumns: ['name', 'products'] } },
   fields: {
     ...withSlug,
     name: text({ validation: { isRequired: true } }),

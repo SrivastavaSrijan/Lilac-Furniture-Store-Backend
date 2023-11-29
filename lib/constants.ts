@@ -1,5 +1,5 @@
 import { text } from '@keystone-6/core/fields';
-import kebabCase from 'lodash.kebabcase';
+import { kebabCase } from 'lodash';
 
 export const cloudinary = {
   cloudName: process.env.CLOUDINARY_CLOUD_NAME ?? '',
@@ -20,7 +20,12 @@ export const withSlug = {
   slug: text({
     // Being a slug, it should be indexed for lookups and unique
     isIndexed: 'unique',
+    defaultValue: 'EMPTY',
     validation: { isRequired: true },
+    ui: {
+      createView: { fieldMode: 'hidden' },
+      itemView: { fieldMode: 'hidden' },
+    },
     // Define the hook function itself and attach it to the resolveInput
     // step of the mutation lifecycle
     hooks: {

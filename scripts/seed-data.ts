@@ -3,10 +3,9 @@ import 'dotenv/config';
 import { PrismaClient } from '.prisma/client';
 import { nanoid } from 'nanoid';
 import { faker } from '@faker-js/faker';
-import { startCase, mapValues } from 'lodash';
+import { startCase, mapValues, kebabCase } from 'lodash';
 import * as fs from 'fs';
 import * as path from 'path';
-import kebabCase = require('lodash.kebabcase');
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const seedProducts = async (prisma: PrismaClient) => {
   const imageDirectory = path.join(

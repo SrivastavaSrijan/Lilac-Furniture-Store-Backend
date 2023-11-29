@@ -11,10 +11,10 @@ import {
   Banner,
   CartItem,
   ProductVariant,
+  extendGraphqlSchema,
 } from './schemas';
 import { insertSeedData, mutateData } from './scripts';
 import { sendPasswordResetToken } from './lib';
-import { extendGraphqlSchema } from './mutations';
 
 const databaseURL = process.env.DATABASE_URL || 'file:./app.db';
 
@@ -68,7 +68,7 @@ export default withAuth(
       Banner,
       CartItem,
     },
-    extendGraphqlSchema: extendGraphqlSchema,
+    extendGraphqlSchema,
     ui: {
       // Show the UI only for poeple who pass this test
       isAccessAllowed: ({ session }) =>

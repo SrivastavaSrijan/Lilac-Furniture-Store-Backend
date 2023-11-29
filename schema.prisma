@@ -24,11 +24,13 @@ model User {
 
 model Product {
   id               String           @id @default(cuid())
-  slug             String           @unique @default("")
+  slug             String           @unique @default("EMPTY")
   name             String           @default("")
   description      String           @default("")
   status           String?          @default("DRAFT")
-  defaultVariantId String           @default("")
+  defaultVariantId String           @default("null")
+  lowestPrice      Int              @default(-1)
+  highestPrice     Int              @default(-1)
   variants         ProductVariant[] @relation("ProductVariant_product")
   type             String           @default("")
   style            String           @default("")
@@ -66,7 +68,7 @@ model ProductVariant {
 
 model Category {
   id          String    @id @default(cuid())
-  slug        String    @unique @default("")
+  slug        String    @unique @default("EMPTY")
   name        String    @default("")
   description String    @default("")
   image       Json?

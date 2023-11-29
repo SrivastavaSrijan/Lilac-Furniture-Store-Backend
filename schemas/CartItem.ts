@@ -6,7 +6,7 @@ export const CartItem = list({
   access: allowAll,
   ui: {
     listView: {
-      initialColumns: ['product', 'quantity', 'user'],
+      initialColumns: ['user', 'variant', 'quantity'],
     },
   },
   fields: {
