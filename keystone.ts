@@ -12,6 +12,9 @@ import {
   CartItem,
   ProductVariant,
   extendGraphqlSchema,
+  OrderItem,
+  Order,
+  ProductSnapshot,
 } from './schemas';
 import { insertSeedData, mutateData } from './scripts';
 import { sendPasswordResetToken } from './lib';
@@ -64,9 +67,12 @@ export default withAuth(
       Product,
       ProductImage,
       ProductVariant,
+      ProductSnapshot,
       Category,
       Banner,
       CartItem,
+      Order,
+      OrderItem,
     },
     extendGraphqlSchema,
     ui: {

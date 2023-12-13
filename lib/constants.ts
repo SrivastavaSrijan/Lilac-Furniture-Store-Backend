@@ -1,5 +1,6 @@
 import { text } from '@keystone-6/core/fields';
 import { kebabCase } from 'lodash';
+import Stripe from 'stripe';
 
 export const cloudinary = {
   cloudName: process.env.CLOUDINARY_CLOUD_NAME ?? '',
@@ -8,8 +9,7 @@ export const cloudinary = {
   folder: 'sickfits',
 };
 
-export const databaseURL =
-  process.env.DATABASE_URL || 'mongodb://localhost/keystone-sick-fits-tutorial';
+export const databaseURL = process.env.DATABASE_URL || '';
 export const sessionConfig = {
   maxAge: 60 * 60 * 24 * 360,
   secret: process.env.COOKIE_SECRET,
@@ -44,3 +44,7 @@ export const withSlug = {
     },
   }),
 };
+
+export const stripe = new Stripe(process.env.STRIPE_SECRET ?? '', {
+  apiVersion: '2023-10-16',
+});

@@ -67,7 +67,12 @@ export const ProductVariant = list({
           lowestPrice,
         },
       });
-
+      console.log(
+        '✨ Updated product min & max - ',
+        lowestPrice,
+        highestPrice,
+        productId,
+      );
       // Call a function to update the product's price range
     },
   },

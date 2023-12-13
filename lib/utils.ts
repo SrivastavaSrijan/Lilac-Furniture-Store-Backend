@@ -1,5 +1,6 @@
 import type { Context } from '.keystone/types';
-
+import { BaseFields } from '@keystone-6/core';
+import { BaseListTypeInfo } from '@keystone-6/core/types';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 async function hasManyCheck({
   operation,
@@ -121,3 +122,13 @@ export const updateDefaultProductSchema = async (
     lowestPricedVariantId,
   );
 };
+
+// Utility function to clone fields
+export function cloneFields<T extends BaseListTypeInfo>(
+  fields: BaseFields<T>,
+): BaseFields<T> {
+  // Clone logic goes here
+  // Depending on your exact requirements, you might simply return a shallow copy of the fields,
+  // or you may need to modify certain field properties (like removing uniqueness constraints).
+  return { ...fields };
+}

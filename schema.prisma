@@ -17,6 +17,7 @@ model User {
   email                   String     @unique @default("")
   password                String?
   cart                    CartItem[] @relation("CartItem_user")
+  orders                  Order[]    @relation("Order_user")
   passwordResetToken      String?
   passwordResetIssuedAt   DateTime?
   passwordResetRedeemedAt DateTime?
@@ -53,17 +54,28 @@ model ProductImage {
 }
 
 model ProductVariant {
-  id                    String     @id @default(cuid())
-  price                 Int
-  color                 String     @default("")
-  material              String     @default("")
-  variant               String     @default("")
-  size                  String     @default("")
-  product               Product?   @relation("ProductVariant_product", fields: [productId], references: [id])
-  productId             String?    @map("product")
-  from_CartItem_variant CartItem[] @relation("CartItem_variant")
+  id                     String      @id @default(cuid())
+  price                  Int
+  color                  String      @default("")
+  material               String      @default("")
+  variant                String      @default("")
+  size                   String      @default("")
+  product                Product?    @relation("ProductVariant_product", fields: [productId], references: [id])
+  productId              String?     @map("product")
+  from_CartItem_variant  CartItem[]  @relation("CartItem_variant")
+  from_OrderItem_variant OrderItem[] @relation("OrderItem_variant")
 
   @@index([productId])
+}
+
+model ProductSnapshot {
+  id                      String      @id @default(cuid())
+  price                   Int
+  image                   String      @default("")
+  name                    String      @default("")
+  slug                    String      @unique @default("EMPTY")
+  meta                    Json?       @default("{}")
+  from_OrderItem_snapshot OrderItem[] @relation("OrderItem_snapshot")
 }
 
 model Category {
@@ -94,4 +106,31 @@ model CartItem {
 
   @@index([variantId])
   @@index([userId])
+}
+
+model Order {
+  id     String      @id @default(cuid())
+  total  Int
+  items  OrderItem[] @relation("OrderItem_order")
+  user   User?       @relation("Order_user", fields: [userId], references: [id])
+  userId String?     @map("user")
+  charge String      @default("")
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id         String           @id @default(cuid())
+  price      Int
+  quantity   Int
+  variant    ProductVariant?  @relation("OrderItem_variant", fields: [variantId], references: [id])
+  variantId  String?          @map("variant")
+  snapshot   ProductSnapshot? @relation("OrderItem_snapshot", fields: [snapshotId], references: [id])
+  snapshotId String?          @map("snapshot")
+  order      Order?           @relation("OrderItem_order", fields: [orderId], references: [id])
+  orderId    String?          @map("order")
+
+  @@index([variantId])
+  @@index([snapshotId])
+  @@index([orderId])
 }
