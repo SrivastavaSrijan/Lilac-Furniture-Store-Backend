@@ -1,0 +1,42 @@
+""" Min/Max Price """
+type MinMax {
+  min: Float
+  max: Float
+}
+
+enum PaymentIntentStatus {
+  CANCELED
+  PROCESSING
+  REQUIRES_ACTION
+  REQUIRES_CAPTURE
+  REQUIRES_CONFIRMATION
+  REQUIRES_PAYMENT_METHOD
+  SUCCEEDED
+}
+
+type CreatePaymentIntentResult {
+  status: PaymentIntentStatus!
+  id: String
+  client_secret: String
+}
+
+type ConfirmPaymentAndCreateOrderResult {
+  status: PaymentIntentStatus!
+  id: String
+  client_secret: String
+  order: Order
+}
+
+type Query {
+  """ Get price range over a ProductVariant """
+  getPriceRange(where: ProductWhereInput): MinMax
+}
+
+type Mutation {
+  """ Add an item to a cart, remove if quantity = 0 """
+  addToCart(id: ID!): CartItem
+  """ Create an payment intent """
+  createPaymentIntent: CreatePaymentIntentResult
+  """ Confirm a payment intent and create an order """
+  confirmPaymentAndCreateOrder(paymentIntentId: String!): ConfirmPaymentAndCreateOrderResult
+}

@@ -1,0 +1,8 @@
+overwrite: true
+schema: "./schema.graphql" # Update this to the path of your GraphQL schema
+generates:
+  ./lib/types/index.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-resolvers"

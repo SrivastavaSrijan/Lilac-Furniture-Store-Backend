@@ -1,70 +1,118 @@
 import { mergeSchemas } from '@graphql-tools/schema';
 import { GraphQLSchema } from 'graphql';
 import type { Context } from '.keystone/types';
-import { stripe } from '../lib/constants';
-// import { CreatePaymentIntent } from '../lib/types';
-// ${CreatePaymentIntent}
-const typeDefs = `
-""" Min/Max Price """
-type MinMax {
-  min: Float
-  max: Float
-}
+import {
+  ConfirmPaymentAndCreateOrderResult,
+  MinMax,
+  PaymentIntentStatus,
+  stripe,
+} from '../lib';
+import { getUserDetails } from '../lib';
+import gql from 'graphql-tag';
+import fs from 'fs';
+import path from 'path';
+import { CreatePaymentIntentResult } from '../lib';
+const typeDefs = gql(
+  fs.readFileSync(path.join(__dirname, '../lib/types.graphql'), 'utf-8'),
+);
 
-type Query {
-  """ Get price range over a ProductVariant """
-  getPriceRange(where: ProductWhereInput): MinMax
-}
-type Mutation {
-  """ Add an item to a cart, remove if quantity = 0 """
-  addToCart(id: ID!): CartItem
-}
-
-type Mutation {
-  """ Create an order with a token """
-  createPaymentIntent: JSON
-}
-`;
 export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
   return mergeSchemas({
     schemas: [baseSchema],
     typeDefs,
     resolvers: {
       Mutation: {
-        createPaymentIntent: async (_, __, context: Context) => {
-          const { session } = context;
-          if (!session?.itemId)
-            throw new Error('Unauthenticated Error', { cause: 403 });
-          const res = await context.prisma.user.findUnique({
-            where: { id: session?.itemId },
-            include: {
-              cart: {
-                include: {
-                  variant: true,
-                },
-              },
-            },
-          });
-          if (!res)
-            throw new Error('Cannot find `Cart` for user ' + session?.itemId, {
-              cause: 500,
-            });
-          const amount = res.cart?.reduce(
-            (p, c) => p + (c?.variant?.price ?? 0 * c.quantity ?? 0),
-            0,
-          );
+        createPaymentIntent: async (
+          _source,
+          __,
+          context: Context,
+        ): Promise<CreatePaymentIntentResult> => {
+          // Create a Stripe Customer
+          const { amount, customer } = await getUserDetails(context);
+          // Create a charge
+          let response: CreatePaymentIntentResult = {
+            status: PaymentIntentStatus.Canceled,
+            id: null,
+          };
           const charge = await stripe.paymentIntents
             .create({
               amount,
               currency: 'INR',
+              customer: customer.id,
             })
             .catch((error) => {
               console.log(error.message);
               throw new Error(error.message);
             });
-          return charge;
+          if (charge && charge.id) {
+            const { id, client_secret, status } = charge;
+            if (!id || !client_secret || !status)
+              return {
+                status: PaymentIntentStatus.Canceled,
+                client_secret: null,
+                id: null,
+              };
+            response = {
+              status: PaymentIntentStatus.Succeeded,
+              id,
+              client_secret,
+            };
+          }
+          return response;
         },
-        addToCart: async (_, { id }, context: Context) => {
+        confirmPaymentAndCreateOrder: async (
+          _source,
+          { paymentIntentId },
+          context: Context,
+        ): Promise<ConfirmPaymentAndCreateOrderResult> => {
+          const {
+            id: userId,
+            cart,
+            amount: cartAmount,
+          } = await getUserDetails(context);
+          const { status, amount, id, client_secret } =
+            await stripe.paymentIntents.retrieve(paymentIntentId);
+          if (status !== 'succeeded' || amount !== cartAmount) {
+            return {
+              status: PaymentIntentStatus.Canceled,
+            };
+          }
+          const orderItems = cart
+            .map(({ variant, quantity }) => {
+              if (!variant) return null;
+              const { price, id: variantId } = variant;
+              const orderItem = {
+                price,
+                quantity,
+                variantId,
+              };
+              return orderItem;
+            })
+            .filter((item): item is NonNullable<typeof item> => item !== null)
+            .map((item) => item!); // Non-null assertion here
+
+          const order = await context.prisma.order.create({
+            data: {
+              total: amount,
+              charge: id,
+              items: {
+                createMany: {
+                  data: orderItems,
+                },
+              },
+              user: {
+                connect: { id: userId },
+              },
+            },
+          });
+          return {
+            status: PaymentIntentStatus.Succeeded,
+            client_secret,
+            id,
+            order,
+          };
+        },
+        addToCart: async (_source, { id }, context: Context) => {
           const { session } = context;
           if (!session?.itemId)
             throw new Error('Unauthenticated Error', { cause: 403 });
@@ -94,7 +142,11 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
         },
       },
       Query: {
-        getPriceRange: async (_, { where }, context: Context) => {
+        getPriceRange: async (
+          _,
+          { where },
+          context: Context,
+        ): Promise<MinMax> => {
           // Use Prisma's aggregation capabilities to get the min and max price from ProductVariant
           const priceAggregate = await context.prisma.productVariant.aggregate({
             where: { product: where },

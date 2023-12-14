@@ -964,8 +964,11 @@ type Mutation {
   """ Add an item to a cart, remove if quantity = 0 """
   addToCart(id: ID!): CartItem
 
-  """ Create an order with a token """
-  createPaymentIntent: JSON
+  """ Create an payment intent """
+  createPaymentIntent: CreatePaymentIntentResult
+
+  """ Confirm a payment intent and create an order """
+  confirmPaymentAndCreateOrder(paymentIntentId: String!): ConfirmPaymentAndCreateOrderResult
 }
 
 union UserAuthenticationWithPasswordResult = UserAuthenticationWithPasswordSuccess | UserAuthenticationWithPasswordFailure
@@ -1148,4 +1151,27 @@ enum KeystoneAdminUISortDirection {
 type MinMax {
   min: Float
   max: Float
+}
+
+enum PaymentIntentStatus {
+  CANCELED
+  PROCESSING
+  REQUIRES_ACTION
+  REQUIRES_CAPTURE
+  REQUIRES_CONFIRMATION
+  REQUIRES_PAYMENT_METHOD
+  SUCCEEDED
+}
+
+type CreatePaymentIntentResult {
+  status: PaymentIntentStatus!
+  id: String
+  client_secret: String
+}
+
+type ConfirmPaymentAndCreateOrderResult {
+  status: PaymentIntentStatus!
+  id: String
+  client_secret: String
+  order: Order
 }

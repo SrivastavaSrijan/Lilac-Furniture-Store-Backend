@@ -8,7 +8,7 @@ import {
   virtual,
   integer,
 } from '@keystone-6/core/fields';
-import { withSlug } from '../lib/constants';
+import { withSlug } from '../lib';
 import type { Context } from '.keystone/types';
 import { updateDefaultProductSchema, validateRelationships } from '../lib';
 

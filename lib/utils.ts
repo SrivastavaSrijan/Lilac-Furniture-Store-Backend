@@ -1,6 +1,7 @@
 import type { Context } from '.keystone/types';
 import { BaseFields } from '@keystone-6/core';
 import { BaseListTypeInfo } from '@keystone-6/core/types';
+import { stripe } from './constants';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 async function hasManyCheck({
   operation,
@@ -132,3 +133,33 @@ export function cloneFields<T extends BaseListTypeInfo>(
   // or you may need to modify certain field properties (like removing uniqueness constraints).
   return { ...fields };
 }
+
+export const getUserDetails = async (context: Context) => {
+  const { session } = context;
+  if (!session?.itemId)
+    throw new Error('Unauthenticated Error', { cause: 403 });
+  const res = await context.prisma.user.findUnique({
+    where: { id: session?.itemId },
+    include: {
+      cart: {
+        include: {
+          variant: true,
+        },
+      },
+    },
+  });
+  if (!res)
+    throw new Error('Cannot find `Cart` for user ' + session?.itemId, {
+      cause: 500,
+    });
+
+  const { name, email, cart, id } = res;
+  const amount =
+    cart?.reduce((p, c) => p + (c?.variant?.price ?? 0 * c.quantity ?? 0), 0) *
+    100;
+  const customer = await stripe.customers.create({
+    email: email,
+    name: name,
+  });
+  return { name, email, cart, id, amount, customer };
+};
