@@ -5,6 +5,7 @@ import {
   ConfirmPaymentAndCreateOrderResult,
   MinMax,
   PaymentIntentStatus,
+  createSnapshot,
   stripe,
 } from '../lib';
 import { getUserDetails } from '../lib';
@@ -12,6 +13,7 @@ import gql from 'graphql-tag';
 import fs from 'fs';
 import path from 'path';
 import { CreatePaymentIntentResult } from '../lib';
+import { Prisma } from '@prisma/client';
 const typeDefs = gql(
   fs.readFileSync(path.join(__dirname, '../lib/types.graphql'), 'utf-8'),
 );
@@ -77,20 +79,20 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
               status: PaymentIntentStatus.Canceled,
             };
           }
-          const orderItems = cart
-            .map(({ variant, quantity }) => {
-              if (!variant) return null;
+          const orderItems: Prisma.OrderItemCreateManyInput[] = [];
+          for await (const { variant, quantity } of cart) {
+            if (variant && quantity) {
               const { price, id: variantId } = variant;
+              const productSnapshot = await createSnapshot(context, variantId);
               const orderItem = {
                 price,
                 quantity,
                 variantId,
+                snapshotId: productSnapshot?.id ?? '',
               };
-              return orderItem;
-            })
-            .filter((item): item is NonNullable<typeof item> => item !== null)
-            .map((item) => item!); // Non-null assertion here
-
+              orderItems.push(orderItem);
+            }
+          }
           const order = await context.prisma.order.create({
             data: {
               total: amount,

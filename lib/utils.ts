@@ -2,6 +2,7 @@ import type { Context } from '.keystone/types';
 import { BaseFields } from '@keystone-6/core';
 import { BaseListTypeInfo } from '@keystone-6/core/types';
 import { stripe } from './constants';
+import { pick } from 'lodash';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 async function hasManyCheck({
   operation,
@@ -162,4 +163,49 @@ export const getUserDetails = async (context: Context) => {
     name: name,
   });
   return { name, email, cart, id, amount, customer };
+};
+
+export const createSnapshot = async (context: Context, variantId: string) => {
+  const variant = await context.prisma.productVariant.findUnique({
+    where: { id: variantId },
+    include: {
+      product: {
+        // select: { name: true, type: true, style: true, company: true },
+        include: { image: true, category: true },
+      },
+    },
+  });
+  if (!variant) return;
+  const { id, price, product, productId, ...rest } = variant;
+  if (!product || !productId) return;
+  const { name, image, slug } = product;
+  if (!name || !slug || !price || !id) return;
+  const variantString = Object.values(rest).join(', ');
+  const meta = {
+    variant: variantString,
+    ...pick(product, ['company', 'type', 'style']),
+  };
+  const productSnapshotValue = {
+    id,
+    price,
+    name,
+    slug,
+    image: (image?.image as { _meta: { url: string } })?._meta?.url ?? null,
+    meta,
+  };
+  // Create snapshots
+  const productSnapshot = await context.prisma.productSnapshot.upsert({
+    where: { id: productSnapshotValue?.id },
+    create: productSnapshotValue,
+    update: productSnapshotValue,
+  });
+  // Attach snapshots to resolvedData
+  // ... handle productSnapshot if necessary
+  console.log(
+    '🫨 Created/Updated a snapshot of variant ID -',
+    variantId,
+    'with the following payload',
+    productSnapshot,
+  );
+  return productSnapshot;
 };

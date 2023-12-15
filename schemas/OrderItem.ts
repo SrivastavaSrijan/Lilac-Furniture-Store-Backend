@@ -2,8 +2,7 @@ import { list } from '@keystone-6/core';
 import { allowAll } from '@keystone-6/core/access';
 import { relationship, integer } from '@keystone-6/core/fields';
 import type { Context } from '.keystone/types';
-import { validateRelationships } from '../lib';
-import { pick } from 'lodash';
+import { createSnapshot, validateRelationships } from '../lib';
 
 export const OrderItem = list({
   access: allowAll,
@@ -46,7 +45,7 @@ export const OrderItem = list({
       operation,
     }) => {
       const context = _context as Context;
-      let resolvedData = _resolvedData;
+      const resolvedData = _resolvedData;
       const variantId =
         operation === 'create'
           ? resolvedData?.variant?.connect?.id
@@ -55,54 +54,13 @@ export const OrderItem = list({
         if (operation === 'update') return resolvedData;
         if (operation === 'create') return null;
       }
-      const variant = await context.prisma.productVariant.findUnique({
-        where: { id: variantId },
-        include: {
-          product: {
-            // select: { name: true, type: true, style: true, company: true },
-            include: { image: true, category: true },
-          },
-        },
-      });
-      if (!variant) return;
-      const { id, price, product, productId, ...rest } = variant;
-      if (!product || !productId) return;
-      const { name, image, slug } = product;
-      if (!name || !slug || !price || !id) return;
-      const variantString = Object.values(rest).join(', ');
-      const meta = {
-        variant: variantString,
-        ...pick(product, ['company', 'type', 'style']),
-      };
-      const productSnapshotValue = {
-        id,
-        price,
-        name,
-        slug,
-        image: (image?.image as { _meta: { url: string } })?._meta?.url ?? null,
-        meta,
-      };
-      // Create snapshots
-      const productSnapshot = await context.prisma.productSnapshot.upsert({
-        where: { id: productSnapshotValue?.id },
-        create: productSnapshotValue,
-        update: productSnapshotValue,
-      });
-      // Attach snapshots to resolvedData
-      // ... handle productSnapshot if necessary
-      resolvedData = {
+      const productSnapshot = await createSnapshot(context, variantId);
+      return {
         ...resolvedData,
-        snapshot: { connect: { id: productSnapshot.id } },
+        ...(productSnapshot && {
+          snapshot: { connect: { id: productSnapshot.id } },
+        }),
       };
-      console.log(
-        '🫨 Created/Updated a snapshot of variant ID -',
-        id,
-        ', product ID -',
-        productId,
-        'with the following payload - ',
-        productSnapshotValue,
-      );
-      return resolvedData;
     },
   },
 });
