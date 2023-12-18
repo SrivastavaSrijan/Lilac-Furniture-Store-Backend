@@ -23,6 +23,33 @@ export const Product = list({
       isIndexed: true,
       isOrderable: true,
     }),
+    shortDescription: virtual({
+      field: graphql.field({
+        type: graphql.String,
+        args: {
+          length: graphql.arg({
+            type: graphql.nonNull(graphql.Int),
+            defaultValue: 50,
+          }),
+        },
+        resolve(item, { length }) {
+          const { type, style, company, description } = item;
+          let shortDescription = `A ${style} ${type} by ${company}. `;
+          if (!description) {
+            return null;
+          }
+          const content = description as string;
+          if (content.length <= length) {
+            shortDescription = shortDescription.concat(content);
+          } else {
+            shortDescription = shortDescription.concat(
+              content.slice(0, length - 3) + '...',
+            );
+          }
+          return shortDescription;
+        },
+      }),
+    }),
     description: text({ ui: { displayMode: 'textarea' } }),
     status: select({
       options: [

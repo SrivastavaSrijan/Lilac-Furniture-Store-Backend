@@ -181,6 +181,7 @@ type Product {
   id: ID!
   slug: String
   name: String
+  shortDescription(length: Int! = 50): String
   description: String
   status: String
   defaultVariantId: String
