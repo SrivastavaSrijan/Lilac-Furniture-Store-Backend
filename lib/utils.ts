@@ -178,26 +178,22 @@ export const createSnapshot = async (context: Context, variantId: string) => {
   if (!variant) return;
   const { id, price, product, productId, ...rest } = variant;
   if (!product || !productId) return;
-  const { name, image, slug } = product;
-  if (!name || !slug || !price || !id) return;
+  const { name, image } = product;
+  if (!name || !price || !id) return;
   const variantString = Object.values(rest).join(', ');
   const meta = {
     variant: variantString,
     ...pick(product, ['company', 'type', 'style']),
   };
   const productSnapshotValue = {
-    id,
     price,
     name,
-    slug,
     image: (image?.image as { _meta: { url: string } })?._meta?.url ?? null,
     meta,
   };
   // Create snapshots
-  const productSnapshot = await context.prisma.productSnapshot.upsert({
-    where: { id: productSnapshotValue?.id },
-    create: productSnapshotValue,
-    update: productSnapshotValue,
+  const productSnapshot = await context.prisma.productSnapshot.create({
+    data: productSnapshotValue,
   });
   // Attach snapshots to resolvedData
   // ... handle productSnapshot if necessary

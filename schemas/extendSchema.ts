@@ -74,11 +74,13 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
           } = await getUserDetails(context);
           const { status, amount, id, client_secret } =
             await stripe.paymentIntents.retrieve(paymentIntentId);
+          // Payment has been cancelled, abort,
           if (status !== 'succeeded' || amount !== cartAmount) {
             return {
               status: PaymentIntentStatus.Canceled,
             };
           }
+          // Payment is received, create an order by creating order items and subsequent  ProductSnapshot
           const orderItems: Prisma.OrderItemCreateManyInput[] = [];
           for await (const { variant, quantity } of cart) {
             if (variant && quantity) {
@@ -97,6 +99,7 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
             data: {
               total: amount,
               charge: id,
+              createdAt: new Date().toISOString(),
               items: {
                 createMany: {
                   data: orderItems,
@@ -107,6 +110,10 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
               },
             },
           });
+          for await (const { id } of cart) {
+            await context.prisma.cartItem.delete({ where: { id } });
+          }
+          // Clear the cart
           return {
             status: PaymentIntentStatus.Succeeded,
             client_secret,

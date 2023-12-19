@@ -510,13 +510,11 @@ type ProductSnapshot {
   price: Int
   image: String
   name: String
-  slug: String
   meta: JSON
 }
 
 input ProductSnapshotWhereUniqueInput {
   id: ID
-  slug: String
 }
 
 input ProductSnapshotWhereInput {
@@ -527,7 +525,6 @@ input ProductSnapshotWhereInput {
   price: IntFilter
   image: StringFilter
   name: StringFilter
-  slug: StringFilter
 }
 
 input ProductSnapshotOrderByInput {
@@ -535,14 +532,12 @@ input ProductSnapshotOrderByInput {
   price: OrderDirection
   image: OrderDirection
   name: OrderDirection
-  slug: OrderDirection
 }
 
 input ProductSnapshotUpdateInput {
   price: Int
   image: String
   name: String
-  slug: String
   meta: JSON
 }
 
@@ -555,7 +550,6 @@ input ProductSnapshotCreateInput {
   price: Int
   image: String
   name: String
-  slug: String
   meta: JSON
 }
 
@@ -752,11 +746,14 @@ input UserRelateToOneForCreateInput {
 type Order {
   id: ID!
   total: Int
+  createdAt: CalendarDay
   items(where: OrderItemWhereInput! = {}, orderBy: [OrderItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: OrderItemWhereUniqueInput): [OrderItem!]
   itemsCount(where: OrderItemWhereInput! = {}): Int
   user: User
   charge: String
 }
+
+scalar CalendarDay @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
 
 input OrderWhereUniqueInput {
   id: ID
@@ -768,9 +765,21 @@ input OrderWhereInput {
   NOT: [OrderWhereInput!]
   id: IDFilter
   total: IntFilter
+  createdAt: CalendarDayFilter
   items: OrderItemManyRelationFilter
   user: UserWhereInput
   charge: StringFilter
+}
+
+input CalendarDayFilter {
+  equals: CalendarDay
+  in: [CalendarDay!]
+  notIn: [CalendarDay!]
+  lt: CalendarDay
+  lte: CalendarDay
+  gt: CalendarDay
+  gte: CalendarDay
+  not: CalendarDayFilter
 }
 
 input OrderItemManyRelationFilter {
@@ -782,11 +791,13 @@ input OrderItemManyRelationFilter {
 input OrderOrderByInput {
   id: OrderDirection
   total: OrderDirection
+  createdAt: OrderDirection
   charge: OrderDirection
 }
 
 input OrderUpdateInput {
   total: Int
+  createdAt: CalendarDay
   items: OrderItemRelateToManyForUpdateInput
   user: UserRelateToOneForUpdateInput
   charge: String
@@ -806,6 +817,7 @@ input OrderUpdateArgs {
 
 input OrderCreateInput {
   total: Int
+  createdAt: CalendarDay
   items: OrderItemRelateToManyForCreateInput
   user: UserRelateToOneForCreateInput
   charge: String

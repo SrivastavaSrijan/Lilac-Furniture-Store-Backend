@@ -73,7 +73,6 @@ model ProductSnapshot {
   price                   Int
   image                   String      @default("")
   name                    String      @default("")
-  slug                    String      @unique @default("EMPTY")
   meta                    Json?       @default("{}")
   from_OrderItem_snapshot OrderItem[] @relation("OrderItem_snapshot")
 }
@@ -109,12 +108,13 @@ model CartItem {
 }
 
 model Order {
-  id     String      @id @default(cuid())
-  total  Int
-  items  OrderItem[] @relation("OrderItem_order")
-  user   User?       @relation("Order_user", fields: [userId], references: [id])
-  userId String?     @map("user")
-  charge String      @default("")
+  id        String      @id @default(cuid())
+  total     Int
+  createdAt DateTime    @map("orderCreatedAt") @postgresql.Date
+  items     OrderItem[] @relation("OrderItem_order")
+  user      User?       @relation("Order_user", fields: [userId], references: [id])
+  userId    String?     @map("user")
+  charge    String      @default("")
 
   @@index([userId])
 }
