@@ -84,7 +84,7 @@ export default withAuth(
     session: statelessSessions({
       maxAge: 60 * 60 * 24 * 3, // How long they stay signed in?
       secret: process.env.COOKIE_SECRET,
-      ...(domain && { domain, sameSite: 'none' }),
+      ...(domain && { domain }),
     }),
   }),
 );
