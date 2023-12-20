@@ -20,11 +20,11 @@ import { insertSeedData, mutateData } from './scripts';
 import { sendPasswordResetToken } from './lib';
 
 const databaseURL = process.env.DATABASE_URL || 'file:./app.db';
-
-const sessionConfig = {
-  maxAge: 60 * 60 * 24 * 360, // How long they stay signed in?
-  secret: process.env.COOKIE_SECRET,
-};
+const domain = process.env.COOKIE_DOMAIN || null;
+const origin =
+  process.env.FRONTEND_URL?.split(',') ?? [process.env.FRONTEND_URL] ??
+  'http://localhost:7777';
+console.log('🧾 Allowing access from', origin, 'with domain', domain);
 
 const { withAuth } = createAuth({
   listKey: 'User',
@@ -41,10 +41,7 @@ const { withAuth } = createAuth({
     // TODO: Add in inital roles here
   },
 });
-const origin =
-  process.env.FRONTEND_URL?.split(',') ?? [process.env.FRONTEND_URL] ??
-  'http://localhost:7777';
-console.log('🧾 Allowing access from', origin);
+
 export default withAuth(
   config({
     server: {
@@ -84,6 +81,10 @@ export default withAuth(
         // console.log(session);
         !!session?.data,
     },
-    session: statelessSessions(sessionConfig),
+    session: statelessSessions({
+      maxAge: 60 * 60 * 24 * 3, // How long they stay signed in?
+      secret: process.env.COOKIE_SECRET,
+      ...(domain && { domain, sameSite: 'none' }),
+    }),
   }),
 );
