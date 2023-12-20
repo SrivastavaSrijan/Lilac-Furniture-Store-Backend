@@ -41,12 +41,15 @@ const { withAuth } = createAuth({
     // TODO: Add in inital roles here
   },
 });
-
+const origin =
+  process.env.FRONTEND_URL?.split(',') ?? [process.env.FRONTEND_URL] ??
+  'http://localhost:7777';
+console.log('🧾 Allowing access from', origin);
 export default withAuth(
   config({
     server: {
       cors: {
-        origin: [process.env.FRONTEND_URL],
+        origin,
         credentials: true,
       },
     },
