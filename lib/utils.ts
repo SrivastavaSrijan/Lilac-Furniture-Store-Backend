@@ -156,8 +156,10 @@ export const getUserDetails = async (context: Context) => {
 
   const { name, email, cart, id } = res;
   const amount =
-    cart?.reduce((p, c) => p + (c?.variant?.price ?? 0 * c.quantity ?? 0), 0) *
-    100;
+    cart?.reduce(
+      (p, c) => p + (c?.variant?.price ?? 0) * (c.quantity ?? 0),
+      0,
+    ) * 100;
   const customer = await stripe.customers.create({
     email: email,
     name: name,
