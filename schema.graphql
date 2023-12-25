@@ -1049,6 +1049,9 @@ type Query {
 
   """ Get price range over a ProductVariant """
   getPriceRange(where: ProductWhereInput): MinMax
+
+  """ Get the distinct over all Products """
+  getAllProductDescriptors(where: ProductWhereInput, take: Int, skip: Int): ProductDescriptor
 }
 
 union AuthenticatedItem = User
@@ -1187,4 +1190,10 @@ type ConfirmPaymentAndCreateOrderResult {
   id: String
   client_secret: String
   order: Order
+}
+
+type ProductDescriptor {
+  types: [String]
+  companies: [String]
+  styles: [String]
 }

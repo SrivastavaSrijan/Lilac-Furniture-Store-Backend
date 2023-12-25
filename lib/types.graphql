@@ -27,9 +27,17 @@ type ConfirmPaymentAndCreateOrderResult {
   order: Order
 }
 
+type ProductDescriptor {
+  types: [String]
+  companies: [String]
+  styles: [String]
+}
+
 type Query {
   """ Get price range over a ProductVariant """
   getPriceRange(where: ProductWhereInput): MinMax
+  """ Get the distinct over all Products """
+  getAllProductDescriptors(where: ProductWhereInput, take: Int, skip:Int): ProductDescriptor
 }
 
 type Mutation {

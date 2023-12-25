@@ -151,6 +151,44 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
         },
       },
       Query: {
+        getAllProductDescriptors: async (
+          _,
+          { where, take, skip },
+          context: Context,
+        ): Promise<{
+          styles: string[];
+          types: string[];
+          companies: string[];
+        }> => {
+          const styles = await context.prisma.product
+            .groupBy({
+              by: ['style'],
+              where,
+              take,
+              skip,
+              orderBy: { style: 'asc' },
+            })
+            .then((res) => res.map((val) => val.style).filter(Boolean));
+          const companies = await context.prisma.product
+            .groupBy({
+              by: ['company'],
+              where,
+              take,
+              skip: skip * 9,
+              orderBy: { company: 'asc' },
+            })
+            .then((res) => res.map((val) => val.company).filter(Boolean));
+          const types = await context.prisma.product
+            .groupBy({
+              by: ['type'],
+              where,
+              take,
+              skip,
+              orderBy: { type: 'asc' },
+            })
+            .then((res) => res.map((val) => val.type).filter(Boolean));
+          return { styles, types, companies };
+        },
         getPriceRange: async (
           _,
           { where },
