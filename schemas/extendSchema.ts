@@ -160,7 +160,7 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
           types: string[];
           companies: string[];
         }> => {
-          const styles = await context.prisma.product
+          const styles = context.prisma.product
             .groupBy({
               by: ['style'],
               where,
@@ -169,7 +169,7 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
               orderBy: { style: 'asc' },
             })
             .then((res) => res.map((val) => val.style).filter(Boolean));
-          const companies = await context.prisma.product
+          const companies = context.prisma.product
             .groupBy({
               by: ['company'],
               where,
@@ -178,7 +178,7 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
               orderBy: { company: 'asc' },
             })
             .then((res) => res.map((val) => val.company).filter(Boolean));
-          const types = await context.prisma.product
+          const types = context.prisma.product
             .groupBy({
               by: ['type'],
               where,
@@ -187,7 +187,16 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
               orderBy: { type: 'asc' },
             })
             .then((res) => res.map((val) => val.type).filter(Boolean));
-          return { styles, types, companies };
+          const [allStyles, allTypes, allCompanies] = await Promise.all([
+            styles,
+            companies,
+            types,
+          ]);
+          return {
+            styles: allStyles,
+            types: allTypes,
+            companies: allCompanies,
+          };
         },
         getPriceRange: async (
           _,
