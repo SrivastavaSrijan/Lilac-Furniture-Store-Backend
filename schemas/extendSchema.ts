@@ -204,18 +204,18 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
           context: Context,
         ): Promise<MinMax> => {
           // Use Prisma's aggregation capabilities to get the min and max price from ProductVariant
-          const priceAggregate = await context.prisma.productVariant.aggregate({
-            where: { product: where },
+          const priceAggregate = await context.prisma.product.aggregate({
+            where,
             _min: {
-              price: true,
+              lowestPrice: true,
             },
             _max: {
-              price: true,
+              lowestPrice: true,
             },
           });
 
-          const min = priceAggregate._min.price;
-          const max = priceAggregate._max.price;
+          const min = priceAggregate._min.lowestPrice;
+          const max = priceAggregate._max.lowestPrice;
           if (min === null || max === null) {
             throw new Error('Cannot aggregate a minimum/maximum price');
           }
