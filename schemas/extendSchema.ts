@@ -189,8 +189,8 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
             .then((res) => res.map((val) => val.type).filter(Boolean));
           const [allStyles, allTypes, allCompanies] = await Promise.all([
             styles,
-            companies,
             types,
+            companies,
           ]);
           return {
             styles: allStyles,
