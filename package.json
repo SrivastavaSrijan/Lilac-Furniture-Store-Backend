@@ -11,7 +11,8 @@
     "seed": "keystone dev --seed",
     "start": "keystone start",
     "build": "keystone build",
-    "postinstall": "keystone build --no-ui --frozen"
+    "postinstall": "keystone build --no-ui --frozen",
+    "build:digitalocean": "yarn install --production=false && yarn run build && rm -rf node_modules && yarn install --production --frozen-lockfile"
   },
   "dependencies": {
     "@faker-js/faker": "^8.3.1",
