@@ -16,6 +16,7 @@ import {
   Order,
   ProductSnapshot,
   Coupon,
+  Review,
 } from './schemas';
 import { insertSeedData, mutateData } from './scripts';
 import { sendPasswordResetToken } from './lib';
@@ -71,6 +72,7 @@ export default withAuth(
       ProductSnapshot,
       Category,
       Banner,
+      Review,
       CartItem,
       Coupon,
       Order,

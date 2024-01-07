@@ -41,6 +41,7 @@ model Product {
   category         Category?        @relation("Product_category", fields: [categoryId], references: [id])
   categoryId       String?          @map("category")
   meta             Json?            @default("{}")
+  reviews          Review[]         @relation("Review_product")
 
   @@index([name])
   @@index([categoryId])
@@ -93,6 +94,19 @@ model Banner {
   subtitle String @default("")
   href     String @default("")
   image    Json?
+}
+
+model Review {
+  id        String    @id @default(cuid())
+  rating    Float
+  content   String    @default("")
+  product   Product?  @relation("Review_product", fields: [productId], references: [id])
+  productId String?   @map("product")
+  author    String    @default("")
+  createdAt DateTime? @default(now())
+
+  @@index([rating])
+  @@index([productId])
 }
 
 model CartItem {

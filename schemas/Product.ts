@@ -124,6 +124,14 @@ export const Product = list({
       },
     }),
     meta: json({ defaultValue: {} }),
+    reviews: relationship({
+      ref: 'Review.product',
+      many: true,
+      ui: {
+        displayMode: 'count',
+        itemView: { fieldPosition: 'sidebar' },
+      },
+    }),
     variant: virtual({
       field: (lists) =>
         graphql.field({

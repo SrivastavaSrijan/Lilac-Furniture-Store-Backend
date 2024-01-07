@@ -8,5 +8,6 @@ export * from './CartItem';
 export * from './Order';
 export * from './OrderItem';
 export * from './Category';
+export * from './Review';
 export * from './User';
 export * from './extendSchema';

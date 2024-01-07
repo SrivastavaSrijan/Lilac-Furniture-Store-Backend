@@ -195,6 +195,8 @@ type Product {
   image: ProductImage
   category: Category
   meta: JSON
+  reviews(where: ReviewWhereInput! = {}, orderBy: [ReviewOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ReviewWhereUniqueInput): [Review!]
+  reviewsCount(where: ReviewWhereInput! = {}): Int
   variant(skuId: String = null): ProductVariant
 }
 
@@ -221,6 +223,7 @@ input ProductWhereInput {
   company: StringFilter
   image: ProductImageWhereInput
   category: CategoryWhereInput
+  reviews: ReviewManyRelationFilter
 }
 
 input StringNullableFilter {
@@ -255,6 +258,12 @@ input ProductVariantManyRelationFilter {
   none: ProductVariantWhereInput
 }
 
+input ReviewManyRelationFilter {
+  every: ReviewWhereInput
+  some: ReviewWhereInput
+  none: ReviewWhereInput
+}
+
 input ProductOrderByInput {
   id: OrderDirection
   slug: OrderDirection
@@ -284,6 +293,7 @@ input ProductUpdateInput {
   image: ProductImageRelateToOneForUpdateInput
   category: CategoryRelateToOneForUpdateInput
   meta: JSON
+  reviews: ReviewRelateToManyForUpdateInput
 }
 
 input ProductVariantRelateToManyForUpdateInput {
@@ -303,6 +313,13 @@ input CategoryRelateToOneForUpdateInput {
   create: CategoryCreateInput
   connect: CategoryWhereUniqueInput
   disconnect: Boolean
+}
+
+input ReviewRelateToManyForUpdateInput {
+  disconnect: [ReviewWhereUniqueInput!]
+  set: [ReviewWhereUniqueInput!]
+  create: [ReviewCreateInput!]
+  connect: [ReviewWhereUniqueInput!]
 }
 
 input ProductUpdateArgs {
@@ -325,6 +342,7 @@ input ProductCreateInput {
   image: ProductImageRelateToOneForCreateInput
   category: CategoryRelateToOneForCreateInput
   meta: JSON
+  reviews: ReviewRelateToManyForCreateInput
 }
 
 input ProductVariantRelateToManyForCreateInput {
@@ -340,6 +358,11 @@ input ProductImageRelateToOneForCreateInput {
 input CategoryRelateToOneForCreateInput {
   create: CategoryCreateInput
   connect: CategoryWhereUniqueInput
+}
+
+input ReviewRelateToManyForCreateInput {
+  create: [ReviewCreateInput!]
+  connect: [ReviewWhereUniqueInput!]
 }
 
 type ProductImage {
@@ -678,6 +701,71 @@ input BannerCreateInput {
   image: Upload
 }
 
+type Review {
+  id: ID!
+  rating: Float
+  content: String
+  product: Product
+  author: String
+  createdAt: DateTime
+}
+
+input ReviewWhereUniqueInput {
+  id: ID
+}
+
+input ReviewWhereInput {
+  AND: [ReviewWhereInput!]
+  OR: [ReviewWhereInput!]
+  NOT: [ReviewWhereInput!]
+  id: IDFilter
+  rating: FloatFilter
+  content: StringFilter
+  product: ProductWhereInput
+  author: StringFilter
+  createdAt: DateTimeNullableFilter
+}
+
+input FloatFilter {
+  equals: Float
+  in: [Float!]
+  notIn: [Float!]
+  lt: Float
+  lte: Float
+  gt: Float
+  gte: Float
+  not: FloatFilter
+}
+
+input ReviewOrderByInput {
+  id: OrderDirection
+  rating: OrderDirection
+  content: OrderDirection
+  author: OrderDirection
+  createdAt: OrderDirection
+}
+
+input ReviewUpdateInput {
+  rating: Float
+  content: String
+  product: ProductRelateToOneForUpdateInput
+  author: String
+  createdAt: DateTime
+}
+
+input ReviewUpdateArgs {
+  where: ReviewWhereUniqueInput!
+  data: ReviewUpdateInput!
+}
+
+input ReviewCreateInput {
+  rating: Float
+  content: String
+  product: ProductRelateToOneForCreateInput
+  author: String
+  createdAt: DateTime
+}
+
 type CartItem {
   id: ID!
   quantity: Int
@@ -775,17 +863,6 @@ input CouponWhereInput {
   usageLimit: IntFilter
   minimumPurchaseAmount: IntFilter
   isActive: BooleanFilter
-}
-
-input FloatFilter {
-  equals: Float
-  in: [Float!]
-  notIn: [Float!]
-  lt: Float
-  lte: Float
-  gt: Float
-  gte: Float
-  not: FloatFilter
 }
 
 input DateTimeFilter {
@@ -1058,6 +1135,12 @@ type Mutation {
   updateBanners(data: [BannerUpdateArgs!]!): [Banner]
   deleteBanner(where: BannerWhereUniqueInput!): Banner
   deleteBanners(where: [BannerWhereUniqueInput!]!): [Banner]
+  createReview(data: ReviewCreateInput!): Review
+  createReviews(data: [ReviewCreateInput!]!): [Review]
+  updateReview(where: ReviewWhereUniqueInput!, data: ReviewUpdateInput!): Review
+  updateReviews(data: [ReviewUpdateArgs!]!): [Review]
+  deleteReview(where: ReviewWhereUniqueInput!): Review
+  deleteReviews(where: [ReviewWhereUniqueInput!]!): [Review]
   createCartItem(data: CartItemCreateInput!): CartItem
   createCartItems(data: [CartItemCreateInput!]!): [CartItem]
   updateCartItem(where: CartItemWhereUniqueInput!, data: CartItemUpdateInput!): CartItem
@@ -1151,6 +1234,9 @@ type Query {
   banners(where: BannerWhereInput! = {}, orderBy: [BannerOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: BannerWhereUniqueInput): [Banner!]
   banner(where: BannerWhereUniqueInput!): Banner
   bannersCount(where: BannerWhereInput! = {}): Int
+  reviews(where: ReviewWhereInput! = {}, orderBy: [ReviewOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ReviewWhereUniqueInput): [Review!]
+  review(where: ReviewWhereUniqueInput!): Review
+  reviewsCount(where: ReviewWhereInput! = {}): Int
   cartItems(where: CartItemWhereInput! = {}, orderBy: [CartItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CartItemWhereUniqueInput): [CartItem!]
   cartItem(where: CartItemWhereUniqueInput!): CartItem
   cartItemsCount(where: CartItemWhereInput! = {}): Int
