@@ -3,6 +3,8 @@ import { BaseFields } from '@keystone-6/core';
 import { BaseListTypeInfo } from '@keystone-6/core/types';
 import { stripe } from './constants';
 import { pick } from 'lodash';
+import { Coupon } from '@prisma/client';
+import dayjs from 'dayjs';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 async function hasManyCheck({
   operation,
@@ -206,4 +208,38 @@ export const createSnapshot = async (context: Context, variantId: string) => {
     productSnapshot,
   );
   return productSnapshot;
+};
+
+// Define a helper function to calculate the discount
+export const calculateDiscount = (amount: number, coupon: Coupon | null) => {
+  if (!coupon) return amount;
+  const { discountType, discountValue } = coupon;
+  let discount = 0;
+  if (discountType === 'PERCENTAGE') {
+    discount = (amount * discountValue) / 100;
+  } else if (discountType === 'FIXED') {
+    discount = discountValue;
+  }
+  return Math.round(discount > amount ? amount : discount); // Ensure discount doesn't exceed the amount
+};
+
+export const validateCoupon = (coupon: Coupon | null) => {
+  if (!coupon) return false;
+  const { isActive, validFrom, validUntil, usageLimit } = coupon;
+  // If the coupon is not found or not active, return false
+  if (!isActive) {
+    return false;
+  }
+  const from = dayjs(validFrom.toISOString());
+  const to = dayjs(validUntil.toISOString());
+  // Check if the coupon has expired
+  if (!dayjs().isBetween(from, to, 'day', '()')) {
+    return false;
+  }
+
+  // Check if the coupon has reached its usage limit
+  if (usageLimit !== null && usageLimit === 0) {
+    return false;
+  }
+  return true;
 };

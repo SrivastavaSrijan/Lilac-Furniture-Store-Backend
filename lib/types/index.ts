@@ -14,6 +14,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  CalendarDay: { input: any; output: any; }
   DateTime: { input: any; output: any; }
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: { input: any; output: any; }
@@ -75,6 +76,22 @@ export type BannerWhereInput = {
 
 export type BannerWhereUniqueInput = {
   id?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type BooleanFilter = {
+  equals?: InputMaybe<Scalars['Boolean']['input']>;
+  not?: InputMaybe<BooleanFilter>;
+};
+
+export type CalendarDayFilter = {
+  equals?: InputMaybe<Scalars['CalendarDay']['input']>;
+  gt?: InputMaybe<Scalars['CalendarDay']['input']>;
+  gte?: InputMaybe<Scalars['CalendarDay']['input']>;
+  in?: InputMaybe<Array<Scalars['CalendarDay']['input']>>;
+  lt?: InputMaybe<Scalars['CalendarDay']['input']>;
+  lte?: InputMaybe<Scalars['CalendarDay']['input']>;
+  not?: InputMaybe<CalendarDayFilter>;
+  notIn?: InputMaybe<Array<Scalars['CalendarDay']['input']>>;
 };
 
 export type CartItem = {
@@ -280,6 +297,83 @@ export type ConfirmPaymentAndCreateOrderResult = {
   status: PaymentIntentStatus;
 };
 
+export type Coupon = {
+  __typename?: 'Coupon';
+  code?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  discountType?: Maybe<Scalars['String']['output']>;
+  discountValue?: Maybe<Scalars['Float']['output']>;
+  id: Scalars['ID']['output'];
+  isActive?: Maybe<Scalars['Boolean']['output']>;
+  minimumPurchaseAmount?: Maybe<Scalars['Int']['output']>;
+  usageLimit?: Maybe<Scalars['Int']['output']>;
+  validFrom?: Maybe<Scalars['DateTime']['output']>;
+  validUntil?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type CouponCreateInput = {
+  code?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  discountType?: InputMaybe<Scalars['String']['input']>;
+  discountValue?: InputMaybe<Scalars['Float']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  minimumPurchaseAmount?: InputMaybe<Scalars['Int']['input']>;
+  usageLimit?: InputMaybe<Scalars['Int']['input']>;
+  validFrom?: InputMaybe<Scalars['DateTime']['input']>;
+  validUntil?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type CouponOrderByInput = {
+  code?: InputMaybe<OrderDirection>;
+  description?: InputMaybe<OrderDirection>;
+  discountType?: InputMaybe<OrderDirection>;
+  discountValue?: InputMaybe<OrderDirection>;
+  id?: InputMaybe<OrderDirection>;
+  isActive?: InputMaybe<OrderDirection>;
+  minimumPurchaseAmount?: InputMaybe<OrderDirection>;
+  usageLimit?: InputMaybe<OrderDirection>;
+  validFrom?: InputMaybe<OrderDirection>;
+  validUntil?: InputMaybe<OrderDirection>;
+};
+
+export type CouponUpdateArgs = {
+  data: CouponUpdateInput;
+  where: CouponWhereUniqueInput;
+};
+
+export type CouponUpdateInput = {
+  code?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  discountType?: InputMaybe<Scalars['String']['input']>;
+  discountValue?: InputMaybe<Scalars['Float']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  minimumPurchaseAmount?: InputMaybe<Scalars['Int']['input']>;
+  usageLimit?: InputMaybe<Scalars['Int']['input']>;
+  validFrom?: InputMaybe<Scalars['DateTime']['input']>;
+  validUntil?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type CouponWhereInput = {
+  AND?: InputMaybe<Array<CouponWhereInput>>;
+  NOT?: InputMaybe<Array<CouponWhereInput>>;
+  OR?: InputMaybe<Array<CouponWhereInput>>;
+  code?: InputMaybe<StringFilter>;
+  description?: InputMaybe<StringFilter>;
+  discountType?: InputMaybe<StringFilter>;
+  discountValue?: InputMaybe<FloatFilter>;
+  id?: InputMaybe<IdFilter>;
+  isActive?: InputMaybe<BooleanFilter>;
+  minimumPurchaseAmount?: InputMaybe<IntFilter>;
+  usageLimit?: InputMaybe<IntFilter>;
+  validFrom?: InputMaybe<DateTimeFilter>;
+  validUntil?: InputMaybe<DateTimeFilter>;
+};
+
+export type CouponWhereUniqueInput = {
+  code?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+};
+
 export type CreateInitialUserInput = {
   email?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -293,6 +387,17 @@ export type CreatePaymentIntentResult = {
   status: PaymentIntentStatus;
 };
 
+export type DateTimeFilter = {
+  equals?: InputMaybe<Scalars['DateTime']['input']>;
+  gt?: InputMaybe<Scalars['DateTime']['input']>;
+  gte?: InputMaybe<Scalars['DateTime']['input']>;
+  in?: InputMaybe<Array<Scalars['DateTime']['input']>>;
+  lt?: InputMaybe<Scalars['DateTime']['input']>;
+  lte?: InputMaybe<Scalars['DateTime']['input']>;
+  not?: InputMaybe<DateTimeFilter>;
+  notIn?: InputMaybe<Array<Scalars['DateTime']['input']>>;
+};
+
 export type DateTimeNullableFilter = {
   equals?: InputMaybe<Scalars['DateTime']['input']>;
   gt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -302,6 +407,17 @@ export type DateTimeNullableFilter = {
   lte?: InputMaybe<Scalars['DateTime']['input']>;
   not?: InputMaybe<DateTimeNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['DateTime']['input']>>;
+};
+
+export type FloatFilter = {
+  equals?: InputMaybe<Scalars['Float']['input']>;
+  gt?: InputMaybe<Scalars['Float']['input']>;
+  gte?: InputMaybe<Scalars['Float']['input']>;
+  in?: InputMaybe<Array<Scalars['Float']['input']>>;
+  lt?: InputMaybe<Scalars['Float']['input']>;
+  lte?: InputMaybe<Scalars['Float']['input']>;
+  not?: InputMaybe<FloatFilter>;
+  notIn?: InputMaybe<Array<Scalars['Float']['input']>>;
 };
 
 export type IdFilter = {
@@ -467,6 +583,8 @@ export type Mutation = {
   createCartItems?: Maybe<Array<Maybe<CartItem>>>;
   createCategories?: Maybe<Array<Maybe<Category>>>;
   createCategory?: Maybe<Category>;
+  createCoupon?: Maybe<Coupon>;
+  createCoupons?: Maybe<Array<Maybe<Coupon>>>;
   createInitialUser: UserAuthenticationWithPasswordSuccess;
   createOrder?: Maybe<Order>;
   createOrderItem?: Maybe<OrderItem>;
@@ -490,6 +608,8 @@ export type Mutation = {
   deleteCartItems?: Maybe<Array<Maybe<CartItem>>>;
   deleteCategories?: Maybe<Array<Maybe<Category>>>;
   deleteCategory?: Maybe<Category>;
+  deleteCoupon?: Maybe<Coupon>;
+  deleteCoupons?: Maybe<Array<Maybe<Coupon>>>;
   deleteOrder?: Maybe<Order>;
   deleteOrderItem?: Maybe<OrderItem>;
   deleteOrderItems?: Maybe<Array<Maybe<OrderItem>>>;
@@ -513,6 +633,8 @@ export type Mutation = {
   updateCartItems?: Maybe<Array<Maybe<CartItem>>>;
   updateCategories?: Maybe<Array<Maybe<Category>>>;
   updateCategory?: Maybe<Category>;
+  updateCoupon?: Maybe<Coupon>;
+  updateCoupons?: Maybe<Array<Maybe<Coupon>>>;
   updateOrder?: Maybe<Order>;
   updateOrderItem?: Maybe<OrderItem>;
   updateOrderItems?: Maybe<Array<Maybe<OrderItem>>>;
@@ -527,6 +649,8 @@ export type Mutation = {
   updateProducts?: Maybe<Array<Maybe<Product>>>;
   updateUser?: Maybe<User>;
   updateUsers?: Maybe<Array<Maybe<User>>>;
+  /**  Validate a coupon against a user  */
+  validateCoupon?: Maybe<ValidateCouponResult>;
 };
 
 
@@ -542,6 +666,7 @@ export type MutationAuthenticateUserWithPasswordArgs = {
 
 
 export type MutationConfirmPaymentAndCreateOrderArgs = {
+  couponCode?: InputMaybe<Scalars['String']['input']>;
   paymentIntentId: Scalars['String']['input'];
 };
 
@@ -576,6 +701,16 @@ export type MutationCreateCategoryArgs = {
 };
 
 
+export type MutationCreateCouponArgs = {
+  data: CouponCreateInput;
+};
+
+
+export type MutationCreateCouponsArgs = {
+  data: Array<CouponCreateInput>;
+};
+
+
 export type MutationCreateInitialUserArgs = {
   data: CreateInitialUserInput;
 };
@@ -598,6 +733,11 @@ export type MutationCreateOrderItemsArgs = {
 
 export type MutationCreateOrdersArgs = {
   data: Array<OrderCreateInput>;
+};
+
+
+export type MutationCreatePaymentIntentArgs = {
+  couponCode?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -678,6 +818,16 @@ export type MutationDeleteCategoriesArgs = {
 
 export type MutationDeleteCategoryArgs = {
   where: CategoryWhereUniqueInput;
+};
+
+
+export type MutationDeleteCouponArgs = {
+  where: CouponWhereUniqueInput;
+};
+
+
+export type MutationDeleteCouponsArgs = {
+  where: Array<CouponWhereUniqueInput>;
 };
 
 
@@ -796,6 +946,17 @@ export type MutationUpdateCategoryArgs = {
 };
 
 
+export type MutationUpdateCouponArgs = {
+  data: CouponUpdateInput;
+  where: CouponWhereUniqueInput;
+};
+
+
+export type MutationUpdateCouponsArgs = {
+  data: Array<CouponUpdateArgs>;
+};
+
+
 export type MutationUpdateOrderArgs = {
   data: OrderUpdateInput;
   where: OrderWhereUniqueInput;
@@ -872,6 +1033,11 @@ export type MutationUpdateUsersArgs = {
   data: Array<UserUpdateArgs>;
 };
 
+
+export type MutationValidateCouponArgs = {
+  couponCode: Scalars['String']['input'];
+};
+
 export type NestedStringFilter = {
   contains?: InputMaybe<Scalars['String']['input']>;
   endsWith?: InputMaybe<Scalars['String']['input']>;
@@ -889,6 +1055,8 @@ export type NestedStringFilter = {
 export type Order = {
   __typename?: 'Order';
   charge?: Maybe<Scalars['String']['output']>;
+  coupon?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['CalendarDay']['output']>;
   id: Scalars['ID']['output'];
   items?: Maybe<Array<OrderItem>>;
   itemsCount?: Maybe<Scalars['Int']['output']>;
@@ -912,6 +1080,8 @@ export type OrderItemsCountArgs = {
 
 export type OrderCreateInput = {
   charge?: InputMaybe<Scalars['String']['input']>;
+  coupon?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['CalendarDay']['input']>;
   items?: InputMaybe<OrderItemRelateToManyForCreateInput>;
   total?: InputMaybe<Scalars['Int']['input']>;
   user?: InputMaybe<UserRelateToOneForCreateInput>;
@@ -1001,6 +1171,8 @@ export type OrderManyRelationFilter = {
 
 export type OrderOrderByInput = {
   charge?: InputMaybe<OrderDirection>;
+  coupon?: InputMaybe<OrderDirection>;
+  createdAt?: InputMaybe<OrderDirection>;
   id?: InputMaybe<OrderDirection>;
   total?: InputMaybe<OrderDirection>;
 };
@@ -1035,6 +1207,8 @@ export type OrderUpdateArgs = {
 
 export type OrderUpdateInput = {
   charge?: InputMaybe<Scalars['String']['input']>;
+  coupon?: InputMaybe<Scalars['String']['input']>;
+  createdAt?: InputMaybe<Scalars['CalendarDay']['input']>;
   items?: InputMaybe<OrderItemRelateToManyForUpdateInput>;
   total?: InputMaybe<Scalars['Int']['input']>;
   user?: InputMaybe<UserRelateToOneForUpdateInput>;
@@ -1045,6 +1219,8 @@ export type OrderWhereInput = {
   NOT?: InputMaybe<Array<OrderWhereInput>>;
   OR?: InputMaybe<Array<OrderWhereInput>>;
   charge?: InputMaybe<StringFilter>;
+  coupon?: InputMaybe<StringFilter>;
+  createdAt?: InputMaybe<CalendarDayFilter>;
   id?: InputMaybe<IdFilter>;
   items?: InputMaybe<OrderItemManyRelationFilter>;
   total?: InputMaybe<IntFilter>;
@@ -1092,6 +1268,7 @@ export type Product = {
   lowestPrice?: Maybe<Scalars['Int']['output']>;
   meta?: Maybe<Scalars['JSON']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  shortDescription?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
   style?: Maybe<Scalars['String']['output']>;
@@ -1099,6 +1276,11 @@ export type Product = {
   variant?: Maybe<ProductVariant>;
   variants?: Maybe<Array<ProductVariant>>;
   variantsCount?: Maybe<Scalars['Int']['output']>;
+};
+
+
+export type ProductShortDescriptionArgs = {
+  length?: Scalars['Int']['input'];
 };
 
 
@@ -1135,6 +1317,13 @@ export type ProductCreateInput = {
   style?: InputMaybe<Scalars['String']['input']>;
   type?: InputMaybe<Scalars['String']['input']>;
   variants?: InputMaybe<ProductVariantRelateToManyForCreateInput>;
+};
+
+export type ProductDescriptor = {
+  __typename?: 'ProductDescriptor';
+  companies?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  styles?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  types?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
 export type ProductImage = {
@@ -1241,7 +1430,6 @@ export type ProductSnapshot = {
   meta?: Maybe<Scalars['JSON']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   price?: Maybe<Scalars['Int']['output']>;
-  slug?: Maybe<Scalars['String']['output']>;
 };
 
 export type ProductSnapshotCreateInput = {
@@ -1249,7 +1437,6 @@ export type ProductSnapshotCreateInput = {
   meta?: InputMaybe<Scalars['JSON']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   price?: InputMaybe<Scalars['Int']['input']>;
-  slug?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ProductSnapshotOrderByInput = {
@@ -1257,7 +1444,6 @@ export type ProductSnapshotOrderByInput = {
   image?: InputMaybe<OrderDirection>;
   name?: InputMaybe<OrderDirection>;
   price?: InputMaybe<OrderDirection>;
-  slug?: InputMaybe<OrderDirection>;
 };
 
 export type ProductSnapshotRelateToOneForCreateInput = {
@@ -1281,7 +1467,6 @@ export type ProductSnapshotUpdateInput = {
   meta?: InputMaybe<Scalars['JSON']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   price?: InputMaybe<Scalars['Int']['input']>;
-  slug?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ProductSnapshotWhereInput = {
@@ -1292,12 +1477,10 @@ export type ProductSnapshotWhereInput = {
   image?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
   price?: InputMaybe<IntFilter>;
-  slug?: InputMaybe<StringFilter>;
 };
 
 export type ProductSnapshotWhereUniqueInput = {
   id?: InputMaybe<Scalars['ID']['input']>;
-  slug?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ProductUpdateArgs = {
@@ -1448,6 +1631,11 @@ export type Query = {
   categories?: Maybe<Array<Category>>;
   categoriesCount?: Maybe<Scalars['Int']['output']>;
   category?: Maybe<Category>;
+  coupon?: Maybe<Coupon>;
+  coupons?: Maybe<Array<Coupon>>;
+  couponsCount?: Maybe<Scalars['Int']['output']>;
+  /**  Get the distinct over all Products  */
+  getAllProductDescriptors?: Maybe<ProductDescriptor>;
   /**  Get price range over a ProductVariant  */
   getPriceRange?: Maybe<MinMax>;
   keystone: KeystoneMeta;
@@ -1530,6 +1718,32 @@ export type QueryCategoriesCountArgs = {
 
 export type QueryCategoryArgs = {
   where: CategoryWhereUniqueInput;
+};
+
+
+export type QueryCouponArgs = {
+  where: CouponWhereUniqueInput;
+};
+
+
+export type QueryCouponsArgs = {
+  cursor?: InputMaybe<CouponWhereUniqueInput>;
+  orderBy?: Array<CouponOrderByInput>;
+  skip?: Scalars['Int']['input'];
+  take?: InputMaybe<Scalars['Int']['input']>;
+  where?: CouponWhereInput;
+};
+
+
+export type QueryCouponsCountArgs = {
+  where?: CouponWhereInput;
+};
+
+
+export type QueryGetAllProductDescriptorsArgs = {
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<ProductWhereInput>;
 };
 
 
@@ -1839,6 +2053,13 @@ export type UserWhereUniqueInput = {
   id?: InputMaybe<Scalars['ID']['input']>;
 };
 
+export type ValidateCouponResult = {
+  __typename?: 'ValidateCouponResult';
+  amount: Scalars['Float']['output'];
+  discountedAmount: Scalars['Float']['output'];
+  isValid: Scalars['Boolean']['output'];
+};
+
 export type ValidateUserPasswordResetTokenResult = {
   __typename?: 'ValidateUserPasswordResetTokenResult';
   code: PasswordResetRedemptionErrorCode;
@@ -1930,6 +2151,9 @@ export type ResolversTypes = {
   BannerWhereInput: BannerWhereInput;
   BannerWhereUniqueInput: BannerWhereUniqueInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  BooleanFilter: BooleanFilter;
+  CalendarDay: ResolverTypeWrapper<Scalars['CalendarDay']['output']>;
+  CalendarDayFilter: CalendarDayFilter;
   CartItem: ResolverTypeWrapper<CartItem>;
   CartItemCreateInput: CartItemCreateInput;
   CartItemManyRelationFilter: CartItemManyRelationFilter;
@@ -1952,11 +2176,20 @@ export type ResolversTypes = {
   CloudinaryImageFormat: CloudinaryImageFormat;
   CloudinaryImage_File: ResolverTypeWrapper<CloudinaryImage_File>;
   ConfirmPaymentAndCreateOrderResult: ResolverTypeWrapper<ConfirmPaymentAndCreateOrderResult>;
+  Coupon: ResolverTypeWrapper<Coupon>;
+  CouponCreateInput: CouponCreateInput;
+  CouponOrderByInput: CouponOrderByInput;
+  CouponUpdateArgs: CouponUpdateArgs;
+  CouponUpdateInput: CouponUpdateInput;
+  CouponWhereInput: CouponWhereInput;
+  CouponWhereUniqueInput: CouponWhereUniqueInput;
   CreateInitialUserInput: CreateInitialUserInput;
   CreatePaymentIntentResult: ResolverTypeWrapper<CreatePaymentIntentResult>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
+  DateTimeFilter: DateTimeFilter;
   DateTimeNullableFilter: DateTimeNullableFilter;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
+  FloatFilter: FloatFilter;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   IDFilter: IdFilter;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
@@ -2009,6 +2242,7 @@ export type ResolversTypes = {
   PaymentIntentStatus: PaymentIntentStatus;
   Product: ResolverTypeWrapper<Product>;
   ProductCreateInput: ProductCreateInput;
+  ProductDescriptor: ResolverTypeWrapper<ProductDescriptor>;
   ProductImage: ResolverTypeWrapper<ProductImage>;
   ProductImageCreateInput: ProductImageCreateInput;
   ProductImageOrderByInput: ProductImageOrderByInput;
@@ -2068,6 +2302,7 @@ export type ResolversTypes = {
   UserUpdateInput: UserUpdateInput;
   UserWhereInput: UserWhereInput;
   UserWhereUniqueInput: UserWhereUniqueInput;
+  ValidateCouponResult: ResolverTypeWrapper<ValidateCouponResult>;
   ValidateUserPasswordResetTokenResult: ResolverTypeWrapper<ValidateUserPasswordResetTokenResult>;
 };
 
@@ -2082,6 +2317,9 @@ export type ResolversParentTypes = {
   BannerWhereInput: BannerWhereInput;
   BannerWhereUniqueInput: BannerWhereUniqueInput;
   Boolean: Scalars['Boolean']['output'];
+  BooleanFilter: BooleanFilter;
+  CalendarDay: Scalars['CalendarDay']['output'];
+  CalendarDayFilter: CalendarDayFilter;
   CartItem: CartItem;
   CartItemCreateInput: CartItemCreateInput;
   CartItemManyRelationFilter: CartItemManyRelationFilter;
@@ -2104,11 +2342,20 @@ export type ResolversParentTypes = {
   CloudinaryImageFormat: CloudinaryImageFormat;
   CloudinaryImage_File: CloudinaryImage_File;
   ConfirmPaymentAndCreateOrderResult: ConfirmPaymentAndCreateOrderResult;
+  Coupon: Coupon;
+  CouponCreateInput: CouponCreateInput;
+  CouponOrderByInput: CouponOrderByInput;
+  CouponUpdateArgs: CouponUpdateArgs;
+  CouponUpdateInput: CouponUpdateInput;
+  CouponWhereInput: CouponWhereInput;
+  CouponWhereUniqueInput: CouponWhereUniqueInput;
   CreateInitialUserInput: CreateInitialUserInput;
   CreatePaymentIntentResult: CreatePaymentIntentResult;
   DateTime: Scalars['DateTime']['output'];
+  DateTimeFilter: DateTimeFilter;
   DateTimeNullableFilter: DateTimeNullableFilter;
   Float: Scalars['Float']['output'];
+  FloatFilter: FloatFilter;
   ID: Scalars['ID']['output'];
   IDFilter: IdFilter;
   Int: Scalars['Int']['output'];
@@ -2152,6 +2399,7 @@ export type ResolversParentTypes = {
   PasswordState: PasswordState;
   Product: Product;
   ProductCreateInput: ProductCreateInput;
+  ProductDescriptor: ProductDescriptor;
   ProductImage: ProductImage;
   ProductImageCreateInput: ProductImageCreateInput;
   ProductImageOrderByInput: ProductImageOrderByInput;
@@ -2210,6 +2458,7 @@ export type ResolversParentTypes = {
   UserUpdateInput: UserUpdateInput;
   UserWhereInput: UserWhereInput;
   UserWhereUniqueInput: UserWhereUniqueInput;
+  ValidateCouponResult: ValidateCouponResult;
   ValidateUserPasswordResetTokenResult: ValidateUserPasswordResetTokenResult;
 };
 
@@ -2226,6 +2475,10 @@ export type BannerResolvers<ContextType = any, ParentType extends ResolversParen
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface CalendarDayScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['CalendarDay'], any> {
+  name: 'CalendarDay';
+}
 
 export type CartItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['CartItem'] = ResolversParentTypes['CartItem']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -2262,6 +2515,20 @@ export type ConfirmPaymentAndCreateOrderResultResolvers<ContextType = any, Paren
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['PaymentIntentStatus'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CouponResolvers<ContextType = any, ParentType extends ResolversParentTypes['Coupon'] = ResolversParentTypes['Coupon']> = {
+  code?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  discountType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  discountValue?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isActive?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  minimumPurchaseAmount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  usageLimit?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  validFrom?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  validUntil?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2375,12 +2642,14 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createCartItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['CartItem']>>>, ParentType, ContextType, RequireFields<MutationCreateCartItemsArgs, 'data'>>;
   createCategories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType, RequireFields<MutationCreateCategoriesArgs, 'data'>>;
   createCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'data'>>;
+  createCoupon?: Resolver<Maybe<ResolversTypes['Coupon']>, ParentType, ContextType, RequireFields<MutationCreateCouponArgs, 'data'>>;
+  createCoupons?: Resolver<Maybe<Array<Maybe<ResolversTypes['Coupon']>>>, ParentType, ContextType, RequireFields<MutationCreateCouponsArgs, 'data'>>;
   createInitialUser?: Resolver<ResolversTypes['UserAuthenticationWithPasswordSuccess'], ParentType, ContextType, RequireFields<MutationCreateInitialUserArgs, 'data'>>;
   createOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationCreateOrderArgs, 'data'>>;
   createOrderItem?: Resolver<Maybe<ResolversTypes['OrderItem']>, ParentType, ContextType, RequireFields<MutationCreateOrderItemArgs, 'data'>>;
   createOrderItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['OrderItem']>>>, ParentType, ContextType, RequireFields<MutationCreateOrderItemsArgs, 'data'>>;
   createOrders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType, RequireFields<MutationCreateOrdersArgs, 'data'>>;
-  createPaymentIntent?: Resolver<Maybe<ResolversTypes['CreatePaymentIntentResult']>, ParentType, ContextType>;
+  createPaymentIntent?: Resolver<Maybe<ResolversTypes['CreatePaymentIntentResult']>, ParentType, ContextType, Partial<MutationCreatePaymentIntentArgs>>;
   createProduct?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<MutationCreateProductArgs, 'data'>>;
   createProductImage?: Resolver<Maybe<ResolversTypes['ProductImage']>, ParentType, ContextType, RequireFields<MutationCreateProductImageArgs, 'data'>>;
   createProductImages?: Resolver<Maybe<Array<Maybe<ResolversTypes['ProductImage']>>>, ParentType, ContextType, RequireFields<MutationCreateProductImagesArgs, 'data'>>;
@@ -2397,6 +2666,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteCartItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['CartItem']>>>, ParentType, ContextType, RequireFields<MutationDeleteCartItemsArgs, 'where'>>;
   deleteCategories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType, RequireFields<MutationDeleteCategoriesArgs, 'where'>>;
   deleteCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'where'>>;
+  deleteCoupon?: Resolver<Maybe<ResolversTypes['Coupon']>, ParentType, ContextType, RequireFields<MutationDeleteCouponArgs, 'where'>>;
+  deleteCoupons?: Resolver<Maybe<Array<Maybe<ResolversTypes['Coupon']>>>, ParentType, ContextType, RequireFields<MutationDeleteCouponsArgs, 'where'>>;
   deleteOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationDeleteOrderArgs, 'where'>>;
   deleteOrderItem?: Resolver<Maybe<ResolversTypes['OrderItem']>, ParentType, ContextType, RequireFields<MutationDeleteOrderItemArgs, 'where'>>;
   deleteOrderItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['OrderItem']>>>, ParentType, ContextType, RequireFields<MutationDeleteOrderItemsArgs, 'where'>>;
@@ -2420,6 +2691,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateCartItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['CartItem']>>>, ParentType, ContextType, RequireFields<MutationUpdateCartItemsArgs, 'data'>>;
   updateCategories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Category']>>>, ParentType, ContextType, RequireFields<MutationUpdateCategoriesArgs, 'data'>>;
   updateCategory?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<MutationUpdateCategoryArgs, 'data' | 'where'>>;
+  updateCoupon?: Resolver<Maybe<ResolversTypes['Coupon']>, ParentType, ContextType, RequireFields<MutationUpdateCouponArgs, 'data' | 'where'>>;
+  updateCoupons?: Resolver<Maybe<Array<Maybe<ResolversTypes['Coupon']>>>, ParentType, ContextType, RequireFields<MutationUpdateCouponsArgs, 'data'>>;
   updateOrder?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<MutationUpdateOrderArgs, 'data' | 'where'>>;
   updateOrderItem?: Resolver<Maybe<ResolversTypes['OrderItem']>, ParentType, ContextType, RequireFields<MutationUpdateOrderItemArgs, 'data' | 'where'>>;
   updateOrderItems?: Resolver<Maybe<Array<Maybe<ResolversTypes['OrderItem']>>>, ParentType, ContextType, RequireFields<MutationUpdateOrderItemsArgs, 'data'>>;
@@ -2434,10 +2707,13 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateProducts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Product']>>>, ParentType, ContextType, RequireFields<MutationUpdateProductsArgs, 'data'>>;
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'data' | 'where'>>;
   updateUsers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, RequireFields<MutationUpdateUsersArgs, 'data'>>;
+  validateCoupon?: Resolver<Maybe<ResolversTypes['ValidateCouponResult']>, ParentType, ContextType, RequireFields<MutationValidateCouponArgs, 'couponCode'>>;
 };
 
 export type OrderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Order'] = ResolversParentTypes['Order']> = {
   charge?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  coupon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['CalendarDay']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   items?: Resolver<Maybe<Array<ResolversTypes['OrderItem']>>, ParentType, ContextType, RequireFields<OrderItemsArgs, 'orderBy' | 'skip' | 'where'>>;
   itemsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<OrderItemsCountArgs, 'where'>>;
@@ -2472,6 +2748,7 @@ export type ProductResolvers<ContextType = any, ParentType extends ResolversPare
   lowestPrice?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   meta?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  shortDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<ProductShortDescriptionArgs, 'length'>>;
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   style?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2479,6 +2756,13 @@ export type ProductResolvers<ContextType = any, ParentType extends ResolversPare
   variant?: Resolver<Maybe<ResolversTypes['ProductVariant']>, ParentType, ContextType, RequireFields<ProductVariantArgs, 'skuId'>>;
   variants?: Resolver<Maybe<Array<ResolversTypes['ProductVariant']>>, ParentType, ContextType, RequireFields<ProductVariantsArgs, 'orderBy' | 'skip' | 'where'>>;
   variantsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<ProductVariantsCountArgs, 'where'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ProductDescriptorResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProductDescriptor'] = ResolversParentTypes['ProductDescriptor']> = {
+  companies?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  styles?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  types?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2496,7 +2780,6 @@ export type ProductSnapshotResolvers<ContextType = any, ParentType extends Resol
   meta?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   price?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2522,6 +2805,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   categories?: Resolver<Maybe<Array<ResolversTypes['Category']>>, ParentType, ContextType, RequireFields<QueryCategoriesArgs, 'orderBy' | 'skip' | 'where'>>;
   categoriesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryCategoriesCountArgs, 'where'>>;
   category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<QueryCategoryArgs, 'where'>>;
+  coupon?: Resolver<Maybe<ResolversTypes['Coupon']>, ParentType, ContextType, RequireFields<QueryCouponArgs, 'where'>>;
+  coupons?: Resolver<Maybe<Array<ResolversTypes['Coupon']>>, ParentType, ContextType, RequireFields<QueryCouponsArgs, 'orderBy' | 'skip' | 'where'>>;
+  couponsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryCouponsCountArgs, 'where'>>;
+  getAllProductDescriptors?: Resolver<Maybe<ResolversTypes['ProductDescriptor']>, ParentType, ContextType, Partial<QueryGetAllProductDescriptorsArgs>>;
   getPriceRange?: Resolver<Maybe<ResolversTypes['MinMax']>, ParentType, ContextType, Partial<QueryGetPriceRangeArgs>>;
   keystone?: Resolver<ResolversTypes['KeystoneMeta'], ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<QueryOrderArgs, 'where'>>;
@@ -2588,6 +2875,13 @@ export type UserAuthenticationWithPasswordSuccessResolvers<ContextType = any, Pa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ValidateCouponResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['ValidateCouponResult'] = ResolversParentTypes['ValidateCouponResult']> = {
+  amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  discountedAmount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  isValid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ValidateUserPasswordResetTokenResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['ValidateUserPasswordResetTokenResult'] = ResolversParentTypes['ValidateUserPasswordResetTokenResult']> = {
   code?: Resolver<ResolversTypes['PasswordResetRedemptionErrorCode'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2597,10 +2891,12 @@ export type ValidateUserPasswordResetTokenResultResolvers<ContextType = any, Par
 export type Resolvers<ContextType = any> = {
   AuthenticatedItem?: AuthenticatedItemResolvers<ContextType>;
   Banner?: BannerResolvers<ContextType>;
+  CalendarDay?: GraphQLScalarType;
   CartItem?: CartItemResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
   CloudinaryImage_File?: CloudinaryImage_FileResolvers<ContextType>;
   ConfirmPaymentAndCreateOrderResult?: ConfirmPaymentAndCreateOrderResultResolvers<ContextType>;
+  Coupon?: CouponResolvers<ContextType>;
   CreatePaymentIntentResult?: CreatePaymentIntentResultResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   JSON?: GraphQLScalarType;
@@ -2619,6 +2915,7 @@ export type Resolvers<ContextType = any> = {
   OrderItem?: OrderItemResolvers<ContextType>;
   PasswordState?: PasswordStateResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
+  ProductDescriptor?: ProductDescriptorResolvers<ContextType>;
   ProductImage?: ProductImageResolvers<ContextType>;
   ProductSnapshot?: ProductSnapshotResolvers<ContextType>;
   ProductVariant?: ProductVariantResolvers<ContextType>;
@@ -2629,6 +2926,7 @@ export type Resolvers<ContextType = any> = {
   UserAuthenticationWithPasswordFailure?: UserAuthenticationWithPasswordFailureResolvers<ContextType>;
   UserAuthenticationWithPasswordResult?: UserAuthenticationWithPasswordResultResolvers<ContextType>;
   UserAuthenticationWithPasswordSuccess?: UserAuthenticationWithPasswordSuccessResolvers<ContextType>;
+  ValidateCouponResult?: ValidateCouponResultResolvers<ContextType>;
   ValidateUserPasswordResetTokenResult?: ValidateUserPasswordResetTokenResultResolvers<ContextType>;
 };
 

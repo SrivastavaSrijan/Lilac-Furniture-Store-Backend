@@ -6,6 +6,7 @@
   },
   "private": true,
   "scripts": {
+    "codegen": "graphql-codegen --config codegen.yml",
     "dev": "keystone dev",
     "seed": "keystone dev --seed",
     "start": "keystone start",
@@ -25,6 +26,7 @@
     "@keystone-6/fields-document": "^8.0.2",
     "@prisma/client": "^4.16.2",
     "cloudinary": "^1.41.0",
+    "dayjs": "^1.11.10",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
     "lodash": "^4.17.21",

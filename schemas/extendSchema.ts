@@ -5,8 +5,10 @@ import {
   ConfirmPaymentAndCreateOrderResult,
   MinMax,
   PaymentIntentStatus,
+  calculateDiscount,
   createSnapshot,
   stripe,
+  validateCoupon,
 } from '../lib';
 import { getUserDetails } from '../lib';
 import gql from 'graphql-tag';
@@ -14,6 +16,10 @@ import fs from 'fs';
 import path from 'path';
 import { CreatePaymentIntentResult } from '../lib';
 import { Prisma } from '@prisma/client';
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+dayjs.extend(isBetween);
+
 const typeDefs = gql(
   fs.readFileSync(path.join(__dirname, '../lib/types.graphql'), 'utf-8'),
 );
@@ -24,21 +30,68 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
     typeDefs,
     resolvers: {
       Mutation: {
+        validateCoupon: async (
+          _source,
+          { couponCode }: { couponCode: string; cartId: string },
+          context: Context,
+        ): Promise<{ isValid: boolean; amount: number }> => {
+          // Initialize the response
+          const { amount } = await getUserDetails(context);
+          let response = {
+            isValid: false,
+            amount,
+            discountedAmount: amount,
+          };
+          // Find the coupon using the provided coupon code
+          const coupon = await context.prisma.coupon.findUnique({
+            where: { code: couponCode },
+          });
+          const isValid = validateCoupon(coupon);
+          if (!isValid) return response;
+          // Apply the coupon discount
+          const discount = calculateDiscount(amount, coupon);
+          const finalAmount = amount - discount;
+          response = {
+            isValid: true,
+            amount,
+            discountedAmount: finalAmount,
+          };
+          // Return the new amount after applying the coupon
+          return response;
+        },
         createPaymentIntent: async (
           _source,
-          __,
+          { couponCode },
           context: Context,
         ): Promise<CreatePaymentIntentResult> => {
           // Create a Stripe Customer
           const { amount, customer } = await getUserDetails(context);
+          let discount = 0;
+          let coupon = null;
+
+          if (couponCode) {
+            coupon = await context.prisma.coupon.findUnique({
+              where: { code: couponCode },
+              rejectOnNotFound: false,
+            });
+
+            // Check if coupon is valid
+            if (!validateCoupon(coupon)) {
+              throw new Error('Invalid or expired coupon code');
+            }
+
+            // Apply the discount
+            discount = calculateDiscount(amount, coupon);
+          }
           // Create a charge
+
           let response: CreatePaymentIntentResult = {
             status: PaymentIntentStatus.Canceled,
             id: null,
           };
           const charge = await stripe.paymentIntents
             .create({
-              amount,
+              amount: amount - discount,
               currency: 'INR',
               customer: customer.id,
             })
@@ -64,7 +117,7 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
         },
         confirmPaymentAndCreateOrder: async (
           _source,
-          { paymentIntentId },
+          { paymentIntentId, couponCode },
           context: Context,
         ): Promise<ConfirmPaymentAndCreateOrderResult> => {
           const {
@@ -72,10 +125,18 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
             cart,
             amount: cartAmount,
           } = await getUserDetails(context);
+          const couponData = await context.prisma.coupon.findUnique({
+            where: { code: couponCode },
+          });
+          // Calculate the discount and the final amount after discount
+          const discount = couponData
+            ? calculateDiscount(cartAmount, couponData)
+            : 0;
+          const finalAmount = cartAmount - discount;
           const { status, amount, id, client_secret } =
             await stripe.paymentIntents.retrieve(paymentIntentId);
-          // Payment has been cancelled, abort,
-          if (status !== 'succeeded' || amount !== cartAmount) {
+          // Payment has been cancelled, abort!
+          if (status !== 'succeeded' || amount !== finalAmount) {
             return {
               status: PaymentIntentStatus.Canceled,
             };
@@ -97,9 +158,10 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
           }
           const order = await context.prisma.order.create({
             data: {
-              total: amount,
+              total: finalAmount,
+              coupon: couponCode,
               charge: id,
-              createdAt: new Date().toISOString(),
+              createdAt: dayjs().toISOString(),
               items: {
                 createMany: {
                   data: orderItems,
@@ -112,6 +174,13 @@ export function extendGraphqlSchema(baseSchema: GraphQLSchema) {
           });
           for await (const { id } of cart) {
             await context.prisma.cartItem.delete({ where: { id } });
+          }
+
+          if (couponCode && couponData?.usageLimit) {
+            await context.prisma.coupon.update({
+              where: { code: couponCode },
+              data: { usageLimit: (couponData?.usageLimit ?? -1) - 1 },
+            });
           }
           // Clear the cart
           return {

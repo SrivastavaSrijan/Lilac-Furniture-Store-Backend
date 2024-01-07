@@ -40,11 +40,19 @@ type Query {
   getAllProductDescriptors(where: ProductWhereInput, take: Int, skip:Int): ProductDescriptor
 }
 
+type ValidateCouponResult {
+  isValid: Boolean!
+  amount: Float!
+  discountedAmount: Float!
+}
+
 type Mutation {
+  """ Validate a coupon against a user """
+  validateCoupon(couponCode: String!): ValidateCouponResult
   """ Add an item to a cart, remove if quantity = 0 """
   addToCart(id: ID!): CartItem
   """ Create an payment intent """
-  createPaymentIntent: CreatePaymentIntentResult
+  createPaymentIntent(couponCode: String): CreatePaymentIntentResult
   """ Confirm a payment intent and create an order """
-  confirmPaymentAndCreateOrder(paymentIntentId: String!): ConfirmPaymentAndCreateOrderResult
+  confirmPaymentAndCreateOrder(paymentIntentId: String!, couponCode: String): ConfirmPaymentAndCreateOrderResult
 }

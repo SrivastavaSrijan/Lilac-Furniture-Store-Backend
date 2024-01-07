@@ -14,6 +14,7 @@ export const Order = list({
       validation: { isRequired: true },
       isOrderable: true,
     }),
+    coupon: text(),
     createdAt: calendarDay({
       db: { map: 'orderCreatedAt' },
       validation: { isRequired: true },

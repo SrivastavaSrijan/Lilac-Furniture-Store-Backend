@@ -3,6 +3,7 @@ export * from './ProductVariant';
 export * from './ProductSnapshot';
 export * from './ProductImage';
 export * from './Banner';
+export * from './Coupon';
 export * from './CartItem';
 export * from './Order';
 export * from './OrderItem';
